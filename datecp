@@ -4,5 +4,5 @@ dateFormatted=$(date +%D%l:%M)
 
 echo "This is the Date and Time: "$dateFormatted
 
-
+echo "You're doing fine"
 

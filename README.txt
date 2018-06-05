@@ -6,4 +6,4 @@
 		The Alphas for each group
 		The Loglikelihood
 
-
+> 
