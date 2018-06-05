@@ -1,0 +1,8 @@
+#!/bin/bash
+
+dateFormatted=$(date +%D%l:%M)
+
+echo "This is the Date and Time: "$dateFormatted
+
+
+
