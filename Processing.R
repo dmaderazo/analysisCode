@@ -4,7 +4,7 @@ library(ggplot2)
 library(reshape2)
 library(dplyr)
 # Input the file you care about
-
+system('mkdir logPlots')
 # Read in the header
 allFiles <- system('ls *.log', intern = TRUE)
 for (foo in allFiles){
@@ -114,7 +114,11 @@ for (foo in allFiles){
   ggplot(data = df, aes(x = iterSeq, y = logLikelihood)) +
     geom_line() + xlab('Iteration') + ylab('Log Likelihood') + 
     ggtitle(sprintf('Ln Likelihood Time Series, ng=%s',numGp)) + theme_minimal()
-  ggsave('LogLikelihood.pdf', plot = last_plot(), path = subDir)
+  
+  logPlotName <- sprintf("LogLikelihood_%s.pdf", numGp)
+  ggsave('logPlotName', plot = last_plot(), path = subDir)
+  moveLogPlot <- sprintf('cp ./%s/%s ./logPlots',subDir,logPlotName)
+  system(moveLogPlot)
   # df[,2+i+(numGp-1)] <---- do the algebra to find the ith Dir Params
   # df[,"last"]
 }
