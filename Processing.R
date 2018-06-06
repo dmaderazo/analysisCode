@@ -116,9 +116,8 @@ for (foo in allFiles){
     ggtitle(sprintf('Ln Likelihood Time Series, ng=%s',numGp)) + theme_minimal()
   
   logPlotName <- sprintf("LogLikelihood_%s.pdf", numGp)
-  ggsave('logPlotName', plot = last_plot(), path = subDir)
+  ggsave(logPlotName, plot = last_plot(), path = subDir)
   moveLogPlot <- sprintf('cp ./%s/%s ./logPlots',subDir,logPlotName)
   system(moveLogPlot)
-  # df[,2+i+(numGp-1)] <---- do the algebra to find the ith Dir Params
-  # df[,"last"]
+
 }
