@@ -29,6 +29,8 @@ numCols="$(($numCols+0))"
 #echo $lineCount
 #echo $numCols
 
-pr -ts"," -l$lineCount -$numCols tempFile 
+pr -ts"," -l$lineCount -$numCols tempFile > logLikelihoodFrame.txt
+
+rm -rf tempFile 
 	
 
