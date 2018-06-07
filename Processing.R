@@ -31,8 +31,8 @@ for (foo in allFiles){
       numSims <- cPointCommand[i+1]
       numSims <- as.integer(numSims)
     } else if (cPointCommand[i] == "-ng") {
+      
       numGp <- cPointCommand[i+1]
-      paddedNum <- numGp
       numGp <- as.integer(numGp)
     }
   }
@@ -116,7 +116,7 @@ for (foo in allFiles){
     geom_line() + xlab('Iteration') + ylab('Log Likelihood') + 
     ggtitle(sprintf('Ln Likelihood Time Series, ng=%s',numGp)) + theme_minimal()
   
-  logPlotName <- sprintf("LogLikelihood_%s.pdf", paddedNum)
+  logPlotName <- sprintf("LogLikelihood_%02d.pdf", as.numeric(numGp))
   ggsave(logPlotName, plot = last_plot(), path = subDir)
   moveLogPlot <- sprintf('cp ./%s/%s ./logPlots',subDir,logPlotName)
   system(moveLogPlot)
