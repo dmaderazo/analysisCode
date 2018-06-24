@@ -26,3 +26,13 @@
 > logRetreiver.sh
 	Needs to be in the same directory so that getLogLikelihood will work.
 	
+> getCharFreqs.py
+	Takes the following arguments
+		-i input: Coded alignment
+		-o output
+		-t threshold: the minimum value to take a seq position into account
+		-gpfile: profiled group file
+	Calculates the Conservation of the group by looking at sequence
+	positions that are greater than threshold value
+
+		
