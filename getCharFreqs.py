@@ -61,7 +61,10 @@ with open(args.output,'r') as g:
     s = g.read()
     consProp = s.count('a') + s.count('f') + s.count('k') + s.count('p') 
     consProp = consProp/len(s)
-    
+    print "The frequency of a is {}".format(s.count('a'))
+    print "The frequency of f is {}".format(s.count('f'))
+    print "The frequency of k is {}".format(s.count('k'))
+    print "The frequency of p is {}".format(s.count('p'))
     print "Conservation proportion is {}".format(consProp)
     print "The number of sequence positions with > {} probability of being in this class is {}".format(args.threshold, len(s))
 
