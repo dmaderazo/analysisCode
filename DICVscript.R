@@ -20,7 +20,8 @@ library(ggplot2)
 x <- seq(2,20) #GENERALIZE THIS
 df <- data.frame(storage,x)
 
-ggplot(df, aes(x = x, y = storage)) + geom_line() + theme_minimal()
+ggplot(df, aes(x = x, y = storage)) + geom_line() + theme_minimal() + theme(plot.title = element_text(hjust = 0.5)) + 
+  labs(x = 'No. of Classes', y = 'DICV') + ggtitle('Information Criterion') + theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 24))
 
 #library(reshape2)
 #ggplot(foo, aes(value)) + geom_line() 

@@ -65,6 +65,8 @@ with open('thisTest','r') as f:
                 indeces = np.where(cleanLines > 0.9)
                 if len(indeces[0]) == 0:
                     pass
+                elif len(indeces[0]) < 101:
+                    pass
                 else:                    
                     profVal = cleanLines[indeces[0]]
                     seqPosFinal = seqPosPre[indeces[0]]
