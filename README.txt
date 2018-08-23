@@ -16,6 +16,11 @@
 > datecp 
 	Tells the date and time
 
+> genWiggle.py
+	Generates the wiggle track. Requires:
+		group profile
+		NEED the axt.net alignment
+
 > runcp.sh 
 	Runs changepoint for a range of segment classes ( currently hard coded 2 to 20 )
 
