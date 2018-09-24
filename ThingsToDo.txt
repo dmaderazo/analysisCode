@@ -1,2 +1,4 @@
-runCp is being weird. Find a way to translate this into a ?Python script.
- -4 Sept 2018
+> Translate runCP to python.
+> Function to translate from alignment back to sequence (python)
+> Investigate how to start coding binary classifiers (python)
+
