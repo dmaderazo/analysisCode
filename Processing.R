@@ -120,5 +120,7 @@ for (foo in allFiles){
   ggsave(logPlotName, plot = last_plot(), path = subDir)
   moveLogPlot <- sprintf('cp ./%s/%s ./logPlots',subDir,logPlotName)
   system(moveLogPlot)
-
 }
+
+system('mkdir logPlotDirs')
+system('mv subdir* ./logPlotDirs')
