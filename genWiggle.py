@@ -4,6 +4,10 @@
 #   Belong to class with >= 0.9 probability
 #   Do I care about indels at this point? Probably not
 
+
+
+# Dear me, please consider using proper code hygeine and writing actually informative comments.
+
 import os 
 import argparse
 import csv
@@ -15,7 +19,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-gpfile", "--groupfile", help="group profile", type = str)
 parser.add_argument("-axt", "--axtfile", help=".net.axt alignment", type = str)
 # parser.add_argument("-t", "--threshold", help="Threshold", type = float)
-parser.add_argument("-o", "--output", type = str)
+parser.add_argument("-o", "--output", help='name of output file', type = str)
 # parser.add_argument("-chr", "--chromosme", type = str)
 
 args = parser.parse_args()

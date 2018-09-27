@@ -36,7 +36,7 @@ for i in range(2, args.num_range+1):
 	# print(args.ouptut_file)
 	# print(args.sample_block)
 
-	command_string=('changePoint -i '+args.input_file+ ' -o ' + args.ouptut_file + ' -n '+ args.num_samples+ ' -b ' + args.num_burn + ' -s ' + args.sample_block + ' -ng ' + str(i) + ' -sf ' + args.seg_file)
+	command_string=('changePoint -i '+args.input_file+ ' -o ' + args.ouptut_file + ' -n '+ args.num_samples+ ' -b ' + args.num_burn + ' -s ' + args.sample_block + ' -ng ' + str(i) + ' -sf ' + args.seg_file+')
 
 	# test_string='ls'
 
