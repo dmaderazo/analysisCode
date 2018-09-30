@@ -18,7 +18,13 @@ outSeq = ''
     		outSeq += 'M'
     	elif c == '-' and d != '-' and e =='-':
     		outSeq += 'I'
-    	
+    	elif (c == 'A' and d == 'A' and e == 'A') or (c == 'T' and d == 'T' and e == 'T'):
+            outSeq += 'a'
+        elif (c == 'A' and d == 'A' and e == 'C') or (c == 'T' and d == 'T' and e == 'G'):
+            outSeq += 'b'
+        elif (c == 'A' and d == 'A' and e == 'G') or (c == 'T' and d == 'T' and e == 'C'):
+            outSeq += 'c'
+        elif (c == 'A' and d == 'A' and e == 'T') or (c == 'T' and d == 'T' and e == 'A'):
+            outSeq += 'd'
 
 
-    only the strong will survive 
