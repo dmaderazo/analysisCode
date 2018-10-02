@@ -20,8 +20,8 @@ parser.add_argument('-s','--sample_block',help='sampling block size, this should
 	default='1000')
 parser.add_argument('-i','--input_file',help='Coded Alignment',type=str)
 parser.add_argument('-o','--ouptut_file',help='ouptut_file name',type=str)
-parser.add_argument('-sf','--seg_file',help='.log file to continute segmentation',type=str,
-	default='')
+# parser.add_argument('-sf','--seg_file',help='.log file to continute segmentation',type=str,
+	# default='')
 parser.add_argument('-r','--num_range',help='range of groups to trym default = 20',type=int,
 	default='20')
 
@@ -36,7 +36,7 @@ for i in range(2, args.num_range+1):
 	# print(args.ouptut_file)
 	# print(args.sample_block)
 
-	command_string=('changePoint -i '+args.input_file+ ' -o ' + args.ouptut_file + ' -n '+ args.num_samples+ ' -b ' + args.num_burn + ' -s ' + args.sample_block + ' -ng ' + str(i) + ' -sf ' + args.seg_file+')
+	command_string=('changePoint -i '+args.input_file+ ' -o ' + args.ouptut_file + ' -n '+ args.num_samples+ ' -b ' + args.num_burn + ' -s ' + args.sample_block + ' -ng ' + str(i))
 
 	# test_string='ls'
 
