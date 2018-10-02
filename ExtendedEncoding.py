@@ -9,7 +9,6 @@ parser = argparse.ArgumentParser()
 #-i INPUTFILE -o OUTPUTFILE -c CHROMNUM
 parser.add_argument("-i", "--inputfile", help = "input file")
 parser.add_argument("-o", "--outputfile", help = "output file")
-# parser.add_argument("-c", "--chromnum", help = "chomosome number")
 
 args = parser.parse_args()
 
@@ -148,7 +147,7 @@ with open(inputFile) as foo:
 with open("temp","r") as coo:
     with open(outputFile,"a+") as g:
         variable = coo.readline()
-        variable = variable[:-1]
+        variable = variable[:-1] #remove the last '#' because ChangePoint will freak out otherwise
         g.write(variable)
     
 os.remove("temp")
