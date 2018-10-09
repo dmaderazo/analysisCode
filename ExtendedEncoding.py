@@ -123,11 +123,12 @@ def encoding(org1,org2,org3):
             return None
 
         # if the word is too short discard
+        ## ASK JON ABOUT THIS. 
         elif len(outSeq) < 7:
            return None
         # if the word is made up of mostly gaps, discard
-        elif char_prop(outSeq) > 0.5:
-            return None
+        #elif char_prop(outSeq) > 0.5:
+         #   return None
         else: #return outSeq
             return outSeq
 
