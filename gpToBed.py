@@ -18,15 +18,15 @@ import numpy as np
 import subprocess
 parser = argparse.ArgumentParser()
 
-parser.add_argument("-gpfile", "--groupfile", help="group profile", type = str)
-parser.add_argument("-axt", "--axtfile", help=".net.axt alignment", type = str)
+# parser.add_argument("-gpFile", "--groupFile", help="group profile", type = str)
+parser.add_argument("-maf", "--mafFile", help="filtered .maf alignment", type = str)
 parser.add_argument("-t", "--threshold", help="Threshold", type = float, default=0.9)
-parser.add_argument("-o", "--output", help='name of output file', type = str)
+# parser.add_argument("-o", "--output", help='name of output file', type = str)
 # parser.add_argument("-chr", "--chromosme", type = str)
 
 args = parser.parse_args()
 # os.
-# subprocess.call('touch tempFile',shell=True)
+subprocess.call('touch temp',shell=True)
 # import pdb; pdb.set_trace()
 
 
@@ -38,50 +38,61 @@ args = parser.parse_args()
 ## format:
 ## no. chrom_in_ref pos_start pos_end other_org pos_start pos_end seq_len
 
-with open(args.axtfile) as f:
-    with open('tempFile', 'w+') as fleeb:
+with open(args.mafFile) as f:
+	with open('temp','w+') as g:
+    # with open('tempFile', 'w+') as fleeb:
     # line = f.readlines()
-        for lines in f:
-            firstLet = lines[0]
-            if re.search('[0-9]',firstLet):
+	    for dirtyLine in f:
+	    	# print(lines)
+	    	# print(len(lines))
+	    	spltLine = dirtyLine.split()
+	    	if len(spltLine) <= 2:
+	    		pass
+	    	elif 'hg19' in spltLine[1]:
+	    		writeString = "{},{},{}\n".format(spltLine[1],spltLine[2],spltLine[3])
+	    		g.write(writeString)
+
+        # species = lines[1]
+        # if 'hg19' in species:
+        	# print('yes')
                 # print(lines[0])
                 # cleanLines = lines.split(' ')
-                fleeb.write(lines)
+                # fleeb.write(lines)
 
 # create file with sequence positions in ref organism (just numbers)
-with open('tempFile','r') as thing:
-    with open('thisTest','w+') as blah:
-        for line in thing:
-            axtLine = line.split()
-            startNum = int(axtLine[2])
-            endNum = int(axtLine[3])
-            sequencePositions = range(startNum,endNum + 1)
-            seqPos = ','.join(map(repr,sequencePositions))
+# with open('tempFile','r') as thing:
+#     with open('thisTest','w+') as blah:
+#         for line in thing:
+#             axtLine = line.split()
+#             startNum = int(axtLine[2])
+#             endNum = int(axtLine[3])
+#             sequencePositions = range(startNum,endNum + 1)
+#             seqPos = ','.join(map(repr,sequencePositions))
 
 
-            blah.write('{}\n'.format(seqPos))
+#             blah.write('{}\n'.format(seqPos))
 
 
 #writes a wiggle track 
 #format
 #Seq_pos profile value (how to filter?)
-with open('thisTest','r') as f:
-    with open(args.groupfile, 'r') as g:
-        with open(args.output,'w+') as h:
-            gpData = csv.reader(g)
-            seqPos = csv.reader(f)
+# with open('thisTest','r') as f:
+#     with open(args.groupfile, 'r') as g:
+#         with open(args.output,'w+') as h:
+#             gpData = csv.reader(g)
+#             seqPos = csv.reader(f)
             
-            for line1,line2 in zip(gpData,seqPos):
-                cleanLines = np.array(np.float_(line1[1:]))
-                seqPosPre = np.array(np.int32(line2))
-                indeces = np.where(cleanLines > args.threshold) 
-                if len(indeces[0]) == 0:
-                    pass
-                elif len(indeces[0]) < 101:
-                    pass
-                else:                    
-                    profVal = cleanLines[indeces[0]]
-                    seqPosFinal = seqPosPre[indeces[0]]
-                    for a,b in zip(seqPosFinal,profVal):
-                        s = '{} {}\n'.format(a,b)
-                        h.write(s)
+#             for line1,line2 in zip(gpData,seqPos):
+#                 cleanLines = np.array(np.float_(line1[1:]))
+#                 seqPosPre = np.array(np.int32(line2))
+#                 indeces = np.where(cleanLines > args.threshold) 
+#                 if len(indeces[0]) == 0:
+#                     pass
+#                 elif len(indeces[0]) < 101:
+#                     pass
+#                 else:                    
+#                     profVal = cleanLines[indeces[0]]
+#                     seqPosFinal = seqPosPre[indeces[0]]
+#                     for a,b in zip(seqPosFinal,profVal):
+#                         s = '{} {}\n'.format(a,b)
+#                         h.write(s)
