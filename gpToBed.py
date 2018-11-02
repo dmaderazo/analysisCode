@@ -7,29 +7,32 @@
 #   Do I care about indels at this point? Probably not
 
 
-
+# 
 # Dear me, please consider using proper code hygeine and writing actually informative comments.
 
-import os 
-import argparse
-import csv
-import re
+import os, argparse, csv, re, subprocess
 import numpy as np
-import subprocess
 parser = argparse.ArgumentParser()
 
-# parser.add_argument("-gpFile", "--groupFile", help="group profile", type = str)
+parser.add_argument("-gpFile", "--groupFile", help="group profile", type = str)
 parser.add_argument("-maf", "--mafFile", help="filtered .maf alignment", type = str)
-parser.add_argument("-t", "--threshold", help="Threshold", type = float, default=0.9)
+parser.add_argument("-t", "--threshold", help="Threshold", type = float, default=0.75)
+# parser.add_argument("-chr","--chormosome", help = "Chromosome", type = str)
 # parser.add_argument("-o", "--output", help='name of output file', type = str)
 # parser.add_argument("-chr", "--chromosme", type = str)
 
 args = parser.parse_args()
+# chromNum = args.chr
 # os.
-subprocess.call('touch temp',shell=True)
+segSize = 50 # Set this to be length of a seq in output file
 # import pdb; pdb.set_trace()
 
+if os.path.isfile('temp') == False:
+    pass
+else:
+    os.remove('temp')
 
+subprocess.call('touch temp',shell=True)
 
 #         # for i in cleanLines
 
@@ -42,16 +45,37 @@ with open(args.mafFile) as f:
 	with open('temp','w+') as g:
     # with open('tempFile', 'w+') as fleeb:
     # line = f.readlines()
-	    for dirtyLine in f:
+	    for dirtyProfileLine in f:
 	    	# print(lines)
 	    	# print(len(lines))
-	    	spltLine = dirtyLine.split()
-	    	if len(spltLine) <= 2:
-	    		pass
-	    	elif 'hg19' in spltLine[1]:
-	    		writeString = "{},{},{}\n".format(spltLine[1],spltLine[2],spltLine[3])
-	    		g.write(writeString)
+	    	cleanProfileLine = dirtyProfileLine.split()
 
+	    	if len(cleanProfileLine) <= 2:
+	    		pass
+	    	elif 'hg19'in cleanProfileLine[1]:
+	    		seqLen = int(cleanProfileLine[3])
+	    		if seqLen > segSize:
+	    			q = seqLen/segSize
+	    			r = seqLen % segSize
+	    			# print r
+	    			for i in range(1,q+1):
+	    				seqStart = int(cleanProfileLine[2])+(i-1)*segSize
+	    				writeString = "{},{},{}\n".format(cleanProfileLine[1],seqStart,segSize)
+	    				g.write(writeString)
+	    				if i == max(range(q+1)) and r != 0:
+	    					seqStart = seqStart+segSize
+	    					writeString = "{},{},{}\n".format(cleanProfileLine[1],seqStart,r)
+	    					g.write(writeString)
+
+	    		else:
+	    			writeString = "{},{},{}\n".format(cleanProfileLine[1],cleanProfileLine[2],cleanProfileLine[3])
+	    			g.write(writeString)
+
+gpFile = args.gpFile
+with open('temp','r+') as yeet:
+	with open(args.)
+	    		# writeString = "{},{},{}\n".format(cleanProfileLine[1],cleanProfileLine[2],cleanProfileLine[3])
+    			# g.write(writeString)
         # species = lines[1]
         # if 'hg19' in species:
         	# print('yes')

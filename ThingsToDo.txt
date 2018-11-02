@@ -1,4 +1,4 @@
 > Translate runCP to python.
 > Function to translate from alignment back to sequence (python)
 > Investigate how to start coding binary classifiers (python)
-
+> Combine filtering for chromosome and encodine (python)
