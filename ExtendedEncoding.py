@@ -36,7 +36,7 @@ def encoding(org1,org2,org3):
             pass
         elif c != '-' and d == '-' and e =='-':
             outSeq += 'N'
-        elif c == '-' and d != '-' and e =='-':
+        elif c != '-' and d == '-' and e !='-':
             outSeq += 'L'
         elif c != '-' and d != '-' and e =='-':
             outSeq += 'K'

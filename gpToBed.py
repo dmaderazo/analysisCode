@@ -27,12 +27,12 @@ args = parser.parse_args()
 segSize = 50 # Set this to be length of a seq in output file
 # import pdb; pdb.set_trace()
 
-if os.path.isfile('temp') == False:
+if os.path.isfile('maf_gp_temp') == False:
     pass
 else:
-    os.remove('temp')
+    os.remove('maf_gp_temp')
 
-subprocess.call('touch temp',shell=True)
+subprocess.call('touch maf_gp_temp',shell=True)
 
 #         # for i in cleanLines
 
@@ -42,7 +42,7 @@ subprocess.call('touch temp',shell=True)
 ## no. chrom_in_ref pos_start pos_end other_org pos_start pos_end seq_len
 
 with open(args.mafFile) as f:
-	with open('temp','w+') as g:
+	with open('maf_gp_temp','w+') as g:
     # with open('tempFile', 'w+') as fleeb:
     # line = f.readlines()
 	    for dirtyProfileLine in f:
