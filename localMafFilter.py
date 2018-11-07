@@ -1,4 +1,5 @@
 #!/usr/bin/py
+# Filter .maf file for only chromNum
 # This is just the conditional part of the encoding.
 # There are 6 different indels I J K L M N depending on the combination of where the gaps are
 import argparse

@@ -32,20 +32,20 @@ def encoding(org1,org2,org3):
    
     outSeq = ''
     for c,d,e in zip(org1,org2,org3):
-        if c == '-' and d == '-' and e =='-':
+        if c == '-' and d == '-' and e =='-': #(000)
             pass
         elif c != '-' and d == '-' and e =='-':
-            outSeq += 'N'
+            outSeq += 'N' #(100)
         elif c != '-' and d == '-' and e !='-':
-            outSeq += 'L'
+            outSeq += 'L' #(101)
         elif c != '-' and d != '-' and e =='-':
-            outSeq += 'K'
+            outSeq += 'K' #(110)
         elif c == '-' and d != '-' and e !='-':
-            outSeq += 'J'
+            outSeq += 'J' #(011)
         elif c == '-' and d == '-' and e !='-':
-            outSeq += 'M'
+            outSeq += 'M' #(001)
         elif c == '-' and d != '-' and e =='-':
-            outSeq += 'I'
+            outSeq += 'I'   #(010)
         elif (c == 'A' and d == 'A' and e == 'A') or (c == 'T' and d == 'T' and e == 'T'):
             outSeq += 'a'
         elif (c == 'A' and d == 'A' and e == 'C') or (c == 'T' and d == 'T' and e == 'G'):
