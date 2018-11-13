@@ -141,7 +141,7 @@ with open('human_info_temp','r') as f:
 					for j in range(len(segStart)):
 						bedChromStart = chromStart + segStart[j]
 						bedChromEnd = chromStart + segEnd[j] + 1 # +1 because interval is [start,end)
-						writeString = '{} {} {}\n'.format(justChrom,bedChromStart,bedChromEnd)
+						writeString = '{}\t{}\t{}\n'.format(justChrom,bedChromStart,bedChromEnd)
 
 						h.write(writeString)
 
