@@ -107,7 +107,7 @@ with open('human_info_temp','r') as f:
 					bedChromStart = chromStart  + segStart[0]
 					bedChromEnd = chromStart + segEnd[0] + 1
 					
-					writeString = '{} {} {}\n'.format(justChrom,bedChromStart,bedChromEnd)
+					writeString = '{}\t{}\t{}\n'.format(justChrom,bedChromStart,bedChromEnd)
 					h.write(writeString)
 
 				# # if there are gaps => multiple segments in the class
