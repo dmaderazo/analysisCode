@@ -8,6 +8,7 @@ import subprocess
 # function to identify proportion of string made up of elements of bad letters 
 def char_prop(word):
     # THIS IS CASE SENSITIVE
+    # These letters are deifinitely ignored by changepoint
     badSet = {'I','J','K','L','M','N','#'}
     word_len = float(len(word))
     char_count = 0
