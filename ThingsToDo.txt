@@ -2,3 +2,16 @@
 > Function to translate from alignment back to sequence (python)
 > Investigate how to start coding binary classifiers (python)
 > Combine filtering for chromosome and encodine (python)
+
+
+
+
+
+
+1. Combine 2-way and 3-way encoding into a single function with internal
+	function definitions for each
+
+2. Create python script to make call the osbourne Script
+
+3. Create a script to compile changepoint
+
