@@ -27,7 +27,8 @@ do
         # nice -20 projects/TanCollaboration/build/optimised/TestCryptInvasionRunner -run_index $start_sim -num_runs $offset_num_runs -is_tan false  -is_gamma_1 true > projects/TanCollaboration/test/output/VL1CryptInvasionRun_${i}_Output.txt 2>&1 &
         #nice -20 projects/TanCollaboration/build/optimised/TestCryptInvasionRunner -run_index $start_sim -num_runs $offset_num_runs -is_tan false  -is_gamma_1 false > projects/TanCollaboration/test/output/VL2CryptInvasionRun_${i}_Output.txt 2>&1 &
         # nice -20 changePoint -i -o2>&1 &
-    echo 
+    nice -20 changePoint -i chr1Encoded  -n 1000 -b 1000 -s 100000 -ng $start_sim -o seg_ng_$start_sim > ./outMessages/stdoutseg_ng_$start_sim.txt & 
+ 
 done
 
 echo "Jobs submitted"
