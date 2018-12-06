@@ -19,7 +19,7 @@ parser.add_argument("-t", "--threshold", help="Threshold", type = float, default
 parser.add_argument("-o", "--output", help='name of output file', type = str)
 
 args = parser.parse_args()
-segSize = 50 # Set this to be length of a seq in output file
+segSize = 50 # Set this to be length of a seq in output file (apparently this doesn't fo anythign)
 t = args.threshold
 
 ## Remove any temp giles that are present in the directory from previous analysis
