@@ -18,7 +18,7 @@ for (i in 1:ncol(newDf)){
 }
 
 library(ggplot2)
-x <- seq(2,11) #GENERALIZE THIS
+x <- seq(2,21) #GENERALIZE THIS
 df <- data.frame(storage,x)
 
 ggplot(df, aes(x = x, y = storage)) + geom_line() + theme_minimal() + theme(plot.title = element_text(hjust = 0.5)) + 
