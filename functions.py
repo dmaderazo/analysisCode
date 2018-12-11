@@ -4,20 +4,18 @@ import subprocess
 import numpy as np
 # Encoding function
 
-def encoding(inputFile,outputFile):
+# def encoding(inputFile,outputFile):
 	
 
-	if inputFile[-3:] == 'axt':
-		#Do 2 way encoding
-		if os.path.isfile(outputFile) == True:
-			os.remove(outputFile)
-
-			
-    os.remove(outputFile)
-	elif inputFile[-3:] == 'maf'
-		#Do 3 way
-	else:
-		print 'Error: Check input file types are .net.axt or .maf.'
+# 	if inputFile[-3:] == 'axt':
+# 		#Do 2 way encoding
+# 		if os.path.isfile(outputFile) == True:
+# 			os.remove(outputFile)
+# 	elif inputFile[-3:] == 'maf':
+# 		pass
+# 		#Do 3 way
+# 	else:
+# 		print 'Error: Check input file types are .net.axt or .maf.'
 
 def file_len(fname):
     p = subprocess.Popen(['wc', '-l', fname], stdout=subprocess.PIPE, 
@@ -27,13 +25,16 @@ def file_len(fname):
         raise IOError(err)
     return int(result.strip().split()[0])
 
-def classification(queryBed,refBed):
-	queryFileLength = file_len(queryBed)
+def seg_len(start,end):
+	return end - start
 
+def classification(queryBed,refBed,threshold):
+	queryFileLength = file_len(queryBed)+1
+	
 	# create storage array for results
 	classifierOut = np.empty([queryFileLength,1])
 
-
+	
 	with open(queryBed, 'r') as f:
 		index = 0
 		for line in f:
@@ -41,10 +42,11 @@ def classification(queryBed,refBed):
 			chromosomeLocation = storage[0]
 			queryStart = int(storage[1])
 			queryEnd = int(storage[2])
-			querySegLen = segEnd - segStart
+			querySegLen = queryEnd - queryStart
 			with open(refBed,'r') as g:
 				for refLine in g:
 					storage2 = refLine.split()
+					totalOverlapProportion = 0
 					if storage[0] != chromosomeLocation: #look somewhere else
 						pass
 					else: #then go finer search
@@ -52,12 +54,12 @@ def classification(queryBed,refBed):
 						refEnd = int(storage2[2])
 						refSegLen = refEnd - refStart
 						if queryStart < refStart: 
-							if queryEnd < refStart:
+							if queryEnd <= refStart:
 								pass 
 								#we've missed
 								# Q |-|
 								# R 	|-|
-							elif queryEnd > refEnd:
+							elif queryEnd >= refEnd:
 								#we have the following overlap
 								# Q |-----|
 								# R  |--|
@@ -68,8 +70,8 @@ def classification(queryBed,refBed):
 								# Q |-----|
 								# R    |-----|
 								overlapProportion = (queryEnd-refStart)/float(querySegLen)
-						elif queryStart > refStart:
-							if queryStart > refEnd:
+						elif queryStart >= refStart:
+							if queryStart >= refEnd:
 								pass
 								#we've missed
 								# Q      |--| 
@@ -79,20 +81,23 @@ def classification(queryBed,refBed):
 								# Q   |-----|
 								# R |-----|
 								overlapProportion = (queryStart - refEnd)/float(querySegLen)
-							elif queryEnd < refEnd:
+							elif queryEnd <= refEnd:
 								#we have the following overlap
 								# Q   |-----|
 								# R |---------|
 								overlapProportion = 1.0
 						
-						print overlapProportion
+						totalOverlapProportion = totalOverlapProportion + overlapProportion
 
-						if overlapProportion > threshold:
+						if totalOverlapProportion >= threshold:
 							classifierOut[index] = 1
 						else:
 							classifierOut[index] = 0
 
 			index += 1			
+	print classifierOut
+	return classifierOut
+
 
 # What would I like the classification function to do:
 # 	take 3 inputs: queryBed,refBed, threshold
