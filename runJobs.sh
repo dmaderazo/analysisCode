@@ -13,8 +13,9 @@ initial_sim=2;
 offset=0;
 num_runs=1;
 num_sweeps=10;
+final_sim=20;
 
-for (( i=0 ; i<${num_sweeps} ; i++))
+for start_sim in $(seq -w $initial_sim $final_sim);
 do
     start_sim=`expr $i \* $num_runs + $initial_sim`;
     #offset_num_runs=`expr $num_runs-$offset`;
