@@ -332,6 +332,19 @@ def classification(queryBed,refBed,threshold):
 	print classifierOut
 	return classifierOut
 
+	##########
+	##
+	## Idea: make the output of these write to a temp file and then write anlother function that takes those and then gets the required 
+	## format for BUGS 
+	##
+	##########
+
+
+	#### Need to write a function to identify most conserved class
+
+	### A function to run jobs?
+
+
 def isfloat(value):
   try:
 	float(value)
@@ -348,29 +361,46 @@ def getLnDataframe(logFrameName):
 		
 			with open(file) as foo:
 				firstLine = foo.readline().split()
-				numGroups = int(firstLine[firstLine.index('-ng')+1])
-				numIts = int(firstLine[firstLine.index('-n')+1])
+				numGroups = float(firstLine[firstLine.index('-ng')+1])
+				numIts = float(firstLine[firstLine.index('-n')+1])
 
 				# store these things into a df
 				storageFrame = pd.DataFrame([numGroups,numIts])
 
 				# iterate through each line of the file to obtain lnLikelihood
+				# print 'this is the start of the line loop'
 				for line in foo:
 					splitLine = line.split()
 					lnLikelihoodValue = splitLine[-1]
-					singleItemFrame = pd.DataFrame([lnLikelihoodValue])
-					if isfloat(splitLine[0]):
-						storageFrame = pd.concat([storageFrame,singleItemFrame],sort=False)
 
-					if isFirst:
-						storageFrame.to_csv('temp.csv')
-						isFirst = False
-						import pdb pdb.set_trace()
-					else:
-						data = pd.read_csv('temp.csv')
-						storageFrame = pd.concat([storageFrame,singleItemFrame],sort=False)
-						data_df = pd.concat([data,storageFrame],sort=False,axis=1)
-						data_df.to_csv(logFrameName)
+					# print lnLikelihoodValue
+					# print isfloat(lnLikelihoodValue)
+					singleItemFrame = pd.DataFrame([lnLikelihoodValue])
+
+
+
+					if isfloat(splitLine[0]):
+						storageFrame = pd.concat([storageFrame,singleItemFrame],ignore_index=True)
+
+						# print storageFrame
+
+				if isFirst:
+					storageFrame.to_csv('temp.csv',index=False,header=False) # Need to turn off option for row index and header
+					isFirst = False
+				else:
+					data = pd.read_csv('temp.csv',header=None)
+					data_df = pd.concat([data,storageFrame],sort=False,axis=1)
+					data_df.to_csv('temp.csv',index=False,header=False)
+
+	os.rename('temp.csv',logFrameName)
+				# print isFirst
+				# print storageFrame
+				# print 'this is the end of line loop'		
+						# else:
+						# 	# data = pd.read_csv('temp.csv')
+						# 	storageFrame = pd.concat([storageFrame,singleItemFrame],sort=False)
+						# 	data_df = pd.concat([data,storageFrame],sort=False,axis=1)
+						# 	data_df.to_csv(logFrameName) # Need to turn off option for row index and header
 
 
 # What would I like the classification function to do:
