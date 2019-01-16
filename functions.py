@@ -353,7 +353,8 @@ def isfloat(value):
 	return False
 
 def getLnDataframe(logFrameName):
-
+	if os.path.isfile('temp.csv'):
+		os.remove('temp.csv')
 	logFileList = glob.glob('*.log')
 	isFirst = True
 
@@ -361,11 +362,12 @@ def getLnDataframe(logFrameName):
 		
 			with open(file) as foo:
 				firstLine = foo.readline().split()
-				numGroups = float(firstLine[firstLine.index('-ng')+1])
+				numGroups = str(firstLine[firstLine.index('-ng')+1])
+				numGroups_index = 'sim_'+numGroups
 				numIts = float(firstLine[firstLine.index('-n')+1])
 
 				# store these things into a df
-				storageFrame = pd.DataFrame([numGroups,numIts])
+				storageFrame = pd.DataFrame([numGroups_index,numGroups,numIts])
 
 				# iterate through each line of the file to obtain lnLikelihood
 				# print 'this is the start of the line loop'
@@ -391,8 +393,14 @@ def getLnDataframe(logFrameName):
 					data = pd.read_csv('temp.csv',header=None)
 					data_df = pd.concat([data,storageFrame],sort=False,axis=1)
 					data_df.to_csv('temp.csv',index=False,header=False)
+	# read in new df
+	final_df = pd.read_csv('temp.csv',header=0)
 
-	os.rename('temp.csv',logFrameName)
+	final_df = final_df.reindex(sorted(final_df.columns),axis=1)
+
+	final_df.to_csv(logFrameName,index=False,header=True)
+	os.remove('temp.csv')
+	# os.rename('temp.csv',logFrameName)
 				# print isFirst
 				# print storageFrame
 				# print 'this is the end of line loop'		
