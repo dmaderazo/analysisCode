@@ -266,7 +266,7 @@ def classification(queryBed,refBed,threshold):
 	queryFileLength = file_len(queryBed)+1
 	
 	# create storage array for results
-	classifierOut = np.empty([queryFileLength,1])
+	classifierOut = [None]*queryFileLength
 
 	
 	with open(queryBed, 'r') as f:
@@ -330,8 +330,8 @@ def classification(queryBed,refBed,threshold):
 
 			index += 1          
 	print classifierOut
-	return classifierOut
-
+	outDf = pd.DataFrame({refBed:classifierOut})
+	return outDf
 	##########
 	##
 	## Idea: make the output of these write to a temp file and then write anlother function that takes those and then gets the required 
@@ -410,6 +410,8 @@ def getLnDataframe(logFrameName):
 						# 	data_df = pd.concat([data,storageFrame],sort=False,axis=1)
 						# 	data_df.to_csv(logFrameName) # Need to turn off option for row index and header
 
+#def getCharFreqs(outCsvFrame,alignment,threshold):
+		
 
 # What would I like the classification function to do:
 #   take 3 inputs: queryBed,refBed, threshold
