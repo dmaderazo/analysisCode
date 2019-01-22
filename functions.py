@@ -263,7 +263,7 @@ def seg_len(start,end):
 	return end - start
 
 def classification(queryBed,refBed,threshold):
-	queryFileLength = file_len(queryBed)+1
+	queryFileLength = file_len(queryBed)
 	
 	# create storage array for results
 	classifierOut = [None]*queryFileLength
@@ -293,6 +293,7 @@ def classification(queryBed,refBed,threshold):
 								#we've missed
 								# Q |-|
 								# R     |-|
+								overlapProportion = 0
 							elif queryEnd >= refEnd:
 								#we have the following overlap
 								# Q |-----|
@@ -310,6 +311,7 @@ def classification(queryBed,refBed,threshold):
 								#we've missed
 								# Q      |--| 
 								# R |--|
+								overlapProportion = 0
 							elif queryEnd > refEnd:
 								#we have the following overlap
 								# Q   |-----|
