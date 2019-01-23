@@ -225,7 +225,8 @@ def encoding(inputFile,outputFile):
 							org2 = list(filter(lambda thing: thing != '', dirtyLine_2))
 							org2_seq = org2[6]
 
-							#same for species 3
+							import pdb; pdb.set_trace()
+							#same for spliecies 3
 							pre_dirt_3 = foo.next()
 							dirtyLine_3 = pre_dirt_3.upper().split(' ')
 							org3 = list(filter(lambda thing: thing != '', dirtyLine_3))
