@@ -4,6 +4,14 @@ import numpy as np
 import argparse
 import glob
 import pandas as pd
+
+def isfloat(value):
+  try:
+	float(value)
+	return True
+  except ValueError:
+	return False
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument('-o','--output',help='name of output .csv file')
