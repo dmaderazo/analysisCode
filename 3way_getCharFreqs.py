@@ -60,20 +60,19 @@ for file in gpFileList:
 
                     if value > args.threshold:
                         char = lines[rowIndex][i]
-
-                        print char
-
                         g.write(char)
                 rowIndex = rowIndex + 1   
 
     # import pdb; pdb.set_trace()
-
     with open('gpFileTemp','r') as g:
         s = g.read()
         slen = len(s)
 
         for letter in alphabet:
-            charProp = s.count(letter)/slen
+            if slen == 0:
+                charProp = 0:
+            else:
+                charProp = s.count(letter)/slen
             myDict[letter]=charProp
 
         myDf=pd.DataFrame(myDict,index=[0])
