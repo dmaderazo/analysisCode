@@ -66,6 +66,8 @@ for file in gpFileList:
     with open('gpFileTemp','r') as g:
         s = g.read()
         slen = len(s)
+        if slen == 0:
+            print 'WHAT'
 
         for letter in alphabet:
             charProp = s.count(letter)/slen
