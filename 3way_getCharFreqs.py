@@ -70,7 +70,7 @@ for file in gpFileList:
 
         for letter in alphabet:
             if slen == 0:
-                charProp = 0:
+                charProp = 0
             else:
                 charProp = s.count(letter)/slen
             myDict[letter]=charProp
