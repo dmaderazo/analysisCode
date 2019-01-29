@@ -60,11 +60,14 @@ for file in gpFileList:
 
                     if value > args.threshold:
                         char = lines[rowIndex][i]
+
+                        print char
+
                         g.write(char)
                 rowIndex = rowIndex + 1   
 
-    import pdb; pdb.set_trace()
-    
+    # import pdb; pdb.set_trace()
+
     with open('gpFileTemp','r') as g:
         s = g.read()
         slen = len(s)
