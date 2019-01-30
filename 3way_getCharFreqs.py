@@ -40,7 +40,10 @@ with open(args.input) as f:
 
 gpFileList = glob.glob('*burnin.p*')
 
+gpFileList
+
 for file in gpFileList:
+    print(file)
     rowIndex = 0
     if os.path.isfile('gpFileTemp'):
         os.remove('gpFileTemp')
@@ -55,9 +58,10 @@ for file in gpFileList:
             myFile = csv.reader(f)
             for line in myFile:        
                 clean_line = line[1:]
+                # print clean_line
                 for i in range(0,len(clean_line)-1):
                     value = float(clean_line[i])
-
+                    
                     if value > args.threshold:
                         char = lines[rowIndex][i]
                         g.write(char)
@@ -66,6 +70,7 @@ for file in gpFileList:
     # import pdb; pdb.set_trace()
     with open('gpFileTemp','r') as g:
         s = g.read()
+        # print(s+'\n')
         slen = len(s)
 
         for letter in alphabet:
