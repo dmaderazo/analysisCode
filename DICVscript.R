@@ -20,6 +20,12 @@ for (i in 1:ncol(newDf)){
   newStorage[i] <- 0.5*var(newDf[,i]) - 2*mean(newDf[,i])
 }
 
+myData <- data.frame(x,newStorage)
+
+write.table(myData[order(newStorage),],file = 'DICVs_ordered.txt')
+
+
+
 library(ggplot2)
 x <- seq(min(foo[1,]),max(foo[1,])) 
 df <- data.frame(newStorage,x)
