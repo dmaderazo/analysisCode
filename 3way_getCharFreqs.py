@@ -82,15 +82,17 @@ for file in gpFileList:
 
         myDf=pd.DataFrame(myDict,index=[0])
     if isFirst:
-        myDf.to_csv('gpData.csv',index=False,header=True)
+        myDf.to_csv(args.output,index=False,header=True)
         isFirst=False
     else: 
-        storageDf=pd.read_csv('gpData.csv',header=0)
+        storageDf=pd.read_csv(args.output,header=0)
         storageDf=storageDf.append(myDf,ignore_index=True)
-        storageDf.to_csv('gpData.csv',index=False,header=True)
+        storageDf.to_csv(args.output,index=False,header=True)
         # consProp = s.count('a') + s.count('v')
         # consProp = consProp/len(s)
         # print "The frequency of a is {}".format(s.count('a')/len(s))
         # print "The frequency of v is {}".format(s.count('v')/len(s))
         # print "Conservation proportion is {}".format(consProp)
         # print "The number of sequence positions with > {} probability of being in this class is {}".format(args.threshold, len(s))
+
+os.remove('gpFileTemp')
