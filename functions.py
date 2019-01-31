@@ -278,59 +278,95 @@ def classification(queryBed,refBed,threshold):
 			queryStart = int(storage[1])
 			queryEnd = int(storage[2])
 			querySegLen = queryEnd - queryStart
+			overlapProportion = 0
 			with open(refBed,'r') as g:
+
+
+				import pdb; 
+
 				for refLine in g:
 					storage2 = refLine.split()
 					totalOverlapProportion = 0
+					# overlapProportion = 0
+
 					if storage[0] != chromosomeLocation: #look somewhere else
 						pass
 					else: #then go finer search
 						refStart = int(storage2[1])
 						refEnd = int(storage2[2])
 						refSegLen = refEnd - refStart
+
+						# print 'queryStart = {}\nqueryEnd = {}\nrefStart = {}\nrefEnd = {}\n'.format(queryStart,queryEnd,refStart,refEnd)
+
+
 						if queryStart < refStart: 
-							if queryEnd <= refStart:
+						 	if queryEnd <= refStart:
+
+								# print('miss1')
+
 								pass 
 								#we've missed
 								# Q |-|
 								# R     |-|
-								overlapProportion = 0
+								#overlapProportion = 0 #asdas
 							elif queryEnd >= refEnd:
+							
+								# print 'overlap1'
+								#db.set_trace()
 								#we have the following overlap
 								# Q |-----|
 								# R  |--|
 								overlapProportion = refSegLen/float(querySegLen)
-
 							elif  queryEnd < refEnd:
+								# print 'overlap2'
 								#we have the following overlap
 								# Q |-----|
 								# R    |-----|
 								overlapProportion = (queryEnd-refStart)/float(querySegLen)
 						elif queryStart >= refStart:
 							if queryStart >= refEnd:
+								# print 'miss2'
 								pass
 								#we've missed
 								# Q      |--| 
 								# R |--|
-								overlapProportion = 0
+								#overlapProportion = 0
 							elif queryEnd > refEnd:
+								# print 'overlap3'
 								#we have the following overlap
 								# Q   |-----|
 								# R |-----|
-								overlapProportion = (queryStart - refEnd)/float(querySegLen)
+								overlapProportion = (refEnd-queryStart)/float(querySegLen)
+								# print overlapProportion
 							elif queryEnd <= refEnd:
+								# print 'overlap 4'
 								#we have the following overlap
 								# Q   |-----|
 								# R |---------|
 								overlapProportion = 1.0
+								# print overlapProportion
 						
+						# if overlapProportion == 0:
+						# 	pass
+						# else:
+						# 	print 'overlapProportion = {}'.format(overlapProportion)
+						# if overlapProportion < 0:
+						# 	pdb.set_trace()
 						totalOverlapProportion = totalOverlapProportion + overlapProportion
 
-						if totalOverlapProportion >= threshold:
-							classifierOut[index] = 1
-						else:
-							classifierOut[index] = 0
+						# if totalOverlapProportion > 0:
+						# 	print 'totalOverlapProportion = {}'.format(totalOverlapProportion)
+							# pdb.set_trace()
+				if totalOverlapProportion > threshold:
+					# print totalOverlapProportion
+					classifierOut[index] = 1
+				else:
+					# print totalOverlapProportion
+					classifierOut[index] = 0
 
+				# print classifierOut
+				# print 'line passed'
+						
 			index += 1          
 	print classifierOut
 	outDf = pd.DataFrame({refBed:classifierOut})
