@@ -15,3 +15,7 @@ consDataFrame$consProp <- NA
 consDataFrame['consProp'] <- consDataFrame['a'] + consDataFrame['v']
 
 consDataFrame %>% arrange(desc(consProp))
+
+my_data = consDataFrame %>% arrange(desc(consProp))
+
+write.csv(my_data, file = "consProp.txt")
