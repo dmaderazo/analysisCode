@@ -41,6 +41,7 @@ parser.add_argument("-maf", "--mafFile", help="filtered .maf alignment",
 args = parser.parse_args()
 inputFile = args.input
 outputFile = args.output
+mafFile = args.mafFile
 queryList=glob.glob('sorted_*')
 
 isFirst = True
