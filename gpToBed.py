@@ -80,7 +80,6 @@ with open(args.mafFile, 'r') as f:
 			if 'hg19' in line:
 				g.write(line)
 
-
 # Returns True if segment is contains less than maxGapProp proportion of gaps
 def fn_acceptableGapProp(seg,maxGapProp):
 
@@ -153,6 +152,7 @@ with open('human_info_temp','r') as f:
 	with open('gp_and_cp_temp','r') as g:
 		with open(args.output,'w+') as h:
 			for line in f:
+
 
 				dirtyData = line.rstrip().split()
 				speciesChorom = dirtyData[1]
@@ -251,6 +251,9 @@ with open('human_info_temp','r') as f:
 
 						bedChromStart = chromStart  + segStart
 						bedChromEnd = chromStart + segEnd
+
+						if bedChromStart == 71547516:
+							import pdb; pdb.set_trace()
 
 						writeString = '{}\t{}\t{}\n'.format(justChrom,bedChromStart,bedChromEnd)
 						h.write(writeString)
@@ -408,10 +411,10 @@ with open('human_info_temp','r') as f:
 
 						# print writeString
 
-command = 'sort -o {} {}'.format(args.output,args.output)
-subprocess.call(command,shell=True)
-## Delete temp files		
-# uncomment this section at the end 
-os.remove('human_info_temp')
-os.remove('maf_gp_temp')
+# command = 'sort -o {} {}'.format(args.output,args.output)
+# subprocess.call(command,shell=True)
+# ## Delete temp files		
+# # uncomment this section at the end 
+# os.remove('human_info_temp')
+# os.remove('maf_gp_temp')
 

@@ -32,7 +32,7 @@ num_groups=7
 
 
 
-for group_num in $(seq -w 0 $num_groups-1);
+for group_num in $(seq -w 0 $num_groups);
 do
     echo $group_num
     # echo $sim_num > ./outMessages/stdoutseg_ng_$sim_num.txt 2>&1 &

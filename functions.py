@@ -225,7 +225,6 @@ def encoding(inputFile,outputFile):
 							org2 = list(filter(lambda thing: thing != '', dirtyLine_2))
 							org2_seq = org2[6]
 
-							import pdb; pdb.set_trace()
 							#same for spliecies 3
 							pre_dirt_3 = foo.next()
 							dirtyLine_3 = pre_dirt_3.upper().split(' ')
@@ -281,8 +280,6 @@ def classification(queryBed,refBed,threshold):
 			overlapProportion = 0
 			with open(refBed,'r') as g:
 
-
-				import pdb; 
 
 				for refLine in g:
 					storage2 = refLine.split()
@@ -351,7 +348,7 @@ def classification(queryBed,refBed,threshold):
 						# else:
 						# 	print 'overlapProportion = {}'.format(overlapProportion)
 						# if overlapProportion < 0:
-						# 	pdb.set_trace()
+
 						totalOverlapProportion = totalOverlapProportion + overlapProportion
 
 						# if totalOverlapProportion > 0:
