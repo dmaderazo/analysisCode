@@ -90,8 +90,8 @@ for line in fo:
 
 	
 
-	if seq_end-seq_start < 6:
-		small_seg_count+=1
+	# if seq_end-seq_start < 6:
+	# 	small_seg_count+=1
 
 	command_string = 'mafExtractor --maf pm_filtered_chr1_filtered_3way.maf '+\
 		'--seq {} --start {} --stop {}'.format(chr_location,seq_start,seq_end) +\
