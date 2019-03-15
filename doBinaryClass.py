@@ -12,7 +12,89 @@ import linecache
 cg_threshold = 0.4
 cons_threshold = 0.6
 
-
+def my_3_way(org1,org2,org3):
+	badSet = {'I','J','K','L','M','N'}
+	outSeq = ''
+	for c,d,e in zip(org1,org2,org3):
+		if c == '-' and d == '-' and e =='-': #(000)
+			pass
+		elif c != '-' and d == '-' and e =='-':
+			outSeq += 'N'     #(100)
+		elif c != '-' and d == '-' and e !='-':
+			outSeq += 'L' #(101)
+		elif c != '-' and d != '-' and e =='-':
+			outSeq += 'K' #(110)
+		elif c == '-' and d != '-' and e !='-':
+			outSeq += 'J' #(011)
+		elif c == '-' and d == '-' and e !='-':
+			outSeq += 'M' #(001)
+		elif c == '-' and d != '-' and e =='-':
+			outSeq += 'I'   #(010)
+		elif (c == 'A' and d == 'A' and e == 'A') or (c == 'T' and d == 'T' and e == 'T'):
+			outSeq += 'a'
+		elif (c == 'A' and d == 'A' and e == 'C') or (c == 'T' and d == 'T' and e == 'G'):
+			outSeq += 'b'
+		elif (c == 'A' and d == 'A' and e == 'G') or (c == 'T' and d == 'T' and e == 'C'):
+			outSeq += 'c'
+		elif (c == 'A' and d == 'A' and e == 'T') or (c == 'T' and d == 'T' and e == 'A'):
+			outSeq += 'd'
+		elif (c == 'A' and d == 'C' and e == 'A') or (c == 'T' and d == 'G' and e == 'T'):
+			outSeq += 'e'
+		elif (c == 'A' and d == 'C' and e == 'C') or (c == 'T' and d == 'G' and e == 'G'):
+			outSeq += 'f'
+		elif (c == 'A' and d == 'C' and e == 'G') or (c == 'T' and d == 'G' and e == 'C'):
+			outSeq += 'g'
+		elif (c == 'A' and d == 'C' and e == 'T') or (c == 'T' and d == 'G' and e == 'A'):
+			outSeq += 'h'
+		elif (c == 'A' and d == 'G' and e == 'A') or (c == 'T' and d == 'C' and e == 'T'):
+			outSeq += 'i'
+		elif (c == 'A' and d == 'G' and e == 'C') or (c == 'T' and d == 'C' and e == 'G'):
+			outSeq += 'j'
+		elif (c == 'A' and d == 'G' and e == 'G') or (c == 'T' and d == 'C' and e == 'C'):
+			outSeq += 'k'
+		elif (c == 'A' and d == 'G' and e == 'T') or (c == 'T' and d == 'C' and e == 'A'):
+			outSeq += 'l'
+		elif (c == 'A' and d == 'T' and e == 'A') or (c == 'T' and d == 'A' and e == 'T'):
+			outSeq += 'm'
+		elif (c == 'A' and d == 'T' and e == 'C') or (c == 'T' and d == 'T' and e == 'G'):
+			outSeq += 'n'
+		elif (c == 'A' and d == 'T' and e == 'G') or (c == 'T' and d == 'A' and e == 'C'):
+			outSeq += 'o'
+		elif (c == 'A' and d == 'T' and e == 'T') or (c == 'T' and d == 'A' and e == 'A'):
+			outSeq += 'p'
+		elif (c == 'C' and d == 'A' and e == 'A') or (c == 'G' and d == 'T' and e == 'T'):
+			outSeq += 'q'
+		elif (c == 'C' and d == 'A' and e == 'C') or (c == 'G' and d == 'T' and e == 'G'):
+			outSeq += 'r'
+		elif (c == 'C' and d == 'A' and e == 'G') or (c == 'G' and d == 'T' and e == 'C'):
+			outSeq += 's'
+		elif (c == 'C' and d == 'A' and e == 'T') or (c == 'G' and d == 'T' and e == 'A'):
+			outSeq += 't'
+		elif (c == 'C' and d == 'C' and e == 'A') or (c == 'G' and d == 'G' and e == 'T'):
+			outSeq += 'u'
+		elif (c == 'C' and d == 'C' and e == 'C') or (c == 'G' and d == 'G' and e == 'G'):
+			outSeq += 'v'
+		elif (c == 'C' and d == 'C' and e == 'G') or (c == 'G' and d == 'G' and e == 'C'):
+			outSeq += 'w'
+		elif (c == 'C' and d == 'C' and e == 'T') or (c == 'G' and d == 'G' and e == 'A'):
+			outSeq += 'x'
+		elif (c == 'C' and d == 'G' and e == 'A') or (c == 'G' and d == 'C' and e == 'T'):
+			outSeq += 'y'
+		elif (c == 'C' and d == 'G' and e == 'C') or (c == 'G' and d == 'C' and e == 'C'):
+			outSeq += 'z' 
+		elif (c == 'C' and d == 'G' and e == 'G') or (c == 'G' and d == 'C' and e == 'C'):
+			outSeq += 'U'
+		elif (c == 'C' and d == 'G' and e == 'T') or (c == 'G' and d == 'C' and e == 'A'):
+			outSeq += 'V'
+		elif (c == 'C' and d == 'T' and e == 'A') or (c == 'G' and d == 'A' and e == 'T'):
+			outSeq += 'W'
+		elif (c == 'C' and d == 'T' and e == 'C') or (c == 'G' and d == 'A' and e == 'G'):
+			outSeq += 'X'
+		elif (c == 'C' and d == 'T' and e == 'G') or (c == 'G' and d == 'A' and e == 'C'):
+			outSeq += 'Y'
+		elif (c == 'C' and d == 'T' and e == 'T') or (c == 'G' and d == 'A' and e == 'A'):
+			outSeq += 'Z'
+	return outSeq
 
 
 def count_chars(s,chars):
@@ -111,7 +193,7 @@ for line in fo:
 		spec1_seq = linecache.getline('mafTemp.maf',5*(i+1)-1)  
 		spec2_seq = linecache.getline('mafTemp.maf',5*(i+1)-1)
 		spec3_seq = linecache.getline('mafTemp.maf',5*(i+1)+1)
-		tempStorage[i] = fn.do_3_way(spec1_seq,spec2_seq,spec3_seq)
+		tempStorage[i] = my_3_way(spec1_seq,spec2_seq,spec3_seq)
 
 	encoded_sequence = ''.join(tempStorage)
 	cg_prop = get_CG_proportion(encoded_sequence)
