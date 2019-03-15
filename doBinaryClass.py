@@ -123,7 +123,7 @@ for line in fo:
 		cg_out[line_count] = 0
 	line_count += 1
 	os.remove('mafTemp.maf')
-	
+	linecache.clearcache()
 cg_df = pd.DataFrame({'cons+CG':cg_out})
 storageDf=pd.read_csv('temp.csv',header=0)
 newDf=pd.concat([storageDf,df_data],axis=1)
