@@ -168,7 +168,7 @@ for line in fo:
 	chr_location = 'hg19.'+temp[0]
 	seq_start = int(temp[1])
 	seq_end = int(temp[2])
-	print seq_end-seq_start
+	# print seq_end-seq_start
 
 	
 
@@ -208,7 +208,7 @@ for line in fo:
 	linecache.clearcache()
 cg_df = pd.DataFrame({'cons+CG':cg_out})
 storageDf=pd.read_csv('temp.csv',header=0)
-newDf=pd.concat([storageDf,df_data],axis=1)
+newDf=pd.concat([storageDf,cg_df],axis=1)
 newDf.to_csv('temp.csv',index=False,header=True)
 
 fo.close()
