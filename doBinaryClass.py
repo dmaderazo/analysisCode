@@ -109,7 +109,7 @@ def get_CG_proportion(seq):
 
 def get_cons_prop(seq):
 	list_cons = ['a','v'] #This is specific to humans in the 3 way alignment
-	num_cons = sum(count_chars(seq,list_cons).values)
+	num_cons = sum(count_chars(seq,list_cons).values())
 	return num_cons/float(len(seq))
 
 parser = argparse.ArgumentParser()
