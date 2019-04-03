@@ -11,6 +11,7 @@ import linecache
 # Parameter block
 cg_threshold = 0.4
 cons_threshold = 0.6
+overlap_threshold = 0
 
 def my_3_way(org1,org2,org3):
 	badSet = {'I','J','K','L','M','N'}
@@ -113,17 +114,17 @@ def get_cons_prop(seq):
 	return num_cons/float(len(seq))
 
 parser = argparse.ArgumentParser()
-
+# The order of stuff in bed file justChrom bedChromStart bedChromEnd cgContent consProp
 parser.add_argument('-i','--input',help='sorted group file in .bed format')
 parser.add_argument('-o','--output',help='name of output .csv file')
-parser.add_argument("-maf", "--mafFile", help="filtered .maf alignment", 
-					type = str)
+# parser.add_argument("-maf", "--mafFile", help="filtered .maf alignment", 
+# 					type = str)
 
 
 args = parser.parse_args()
 inputFile = args.input
 outputFile = args.output
-mafFile = args.mafFile
+# mafFile = args.mafFile
 queryList=glob.glob('sorted_*')
 
 isFirst = True
@@ -132,7 +133,7 @@ if os.path.isfile('temp.csv'):
 	os.remove('temp.csv')
 
 for queryFile in queryList:
-	df_data=fn.classification(inputFile,queryFile,0.5)
+	df_data=fn.classification(inputFile,queryFile,overlapThreshold)
 	
 	if isFirst:
 		df_data.to_csv('temp.csv',index=False,header=True)
@@ -142,71 +143,87 @@ for queryFile in queryList:
 		newDf=pd.concat([storageDf,df_data],axis=1)
 		newDf.to_csv('temp.csv',index=False,header=True)
 
-# This black creates another .maf file that allows mafExtractor usage
-output = 'pm_'+mafFile
-with open(mafFile,'r') as f:
-	with open(output,'w+') as g:
-		for line in f:
-			whole_line = re.split(r'(\S+)',line)
-			if len(whole_line) > 1:
-				if whole_line[1] == 's':
-					whole_line[9] = '+'
-				writeString = ''.join(whole_line)
 
-				# print writeString
-			else:
-				writeString = '\n'
-			g.write(writeString)
 
-numLines = fn.file_len(inputFile)
-cg_out = [None]*numLines
-
-fo = open(inputFile,'r')
 line_count = 0
+
+cg_cons_out = [None]*(fn.file_len(inputFile))
+fo = open(inputFile,'r')
 for line in fo:
-	temp = line.split()
-	chr_location = 'hg19.'+temp[0]
-	seq_start = int(temp[1])
-	seq_end = int(temp[2])
-	# print seq_end-seq_start
-
-	
-
-	# if seq_end-seq_start < 6:
-	# 	small_seg_count+=1
-
-	command_string = 'mafExtractor --maf pm_filtered_chr1_filtered_3way.maf '+\
-		'--seq {} --start {} --stop {}'.format(chr_location,seq_start,seq_end) +\
-		'> mafTemp.maf'
-	os.system(command_string)
-
-	# with open('mafTemp.maf','r') as foo:
-	# 	with open('countFile','w+') as bar:
-	# 		for line in foo:
-	# 			if 'hg19' in line:
-	# 				bar.write(line)
-
-	num_blocks = (fn.file_len('mafTemp.maf')-2)//5
-
-	tempStorage = [0]*num_blocks
-	for i in range(len(tempStorage)):
-		spec1_seq = linecache.getline('mafTemp.maf',5*(i+1)-1)  
-		spec2_seq = linecache.getline('mafTemp.maf',5*(i+1)-1)
-		spec3_seq = linecache.getline('mafTemp.maf',5*(i+1)+1)
-		tempStorage[i] = my_3_way(spec1_seq,spec2_seq,spec3_seq)
-
-	encoded_sequence = ''.join(tempStorage)
-	cg_prop = get_CG_proportion(encoded_sequence)
-	cons_prop = get_cons_prop(encoded_sequence)
-
+	temp = line.strip().split('\t')
+	cg_prop = float(temp[3])
+	cons_prop = float(temp[4])
 	if (cons_prop > cons_threshold and cg_prop > cg_threshold):
 		cg_out[line_count] = 1
 	else:
 		cg_out[line_count] = 0
 	line_count += 1
-	os.remove('mafTemp.maf')
-	linecache.clearcache()
-cg_df = pd.DataFrame({'cons+CG':cg_out})
+
+# This black creates another .maf file that allows mafExtractor usage
+# output = 'pm_'+mafFile
+# with open(mafFile,'r') as f:
+# 	with open(output,'w+') as g:
+# 		for line in f:
+# 			whole_line = re.split(r'(\S+)',line)
+# 			if len(whole_line) > 1:
+# 				if whole_line[1] == 's':
+# 					whole_line[9] = '+'
+# 				writeString = ''.join(whole_line)
+
+# 				# print writeString
+# 			else:
+# 				writeString = '\n'
+# 			g.write(writeString)
+
+# numLines = fn.file_len(inputFile)
+# cg_out = [None]*numLines
+
+# fo = open(inputFile,'r')
+# line_count = 0
+# for line in fo:
+# 	temp = line.split()
+# 	chr_location = 'hg19.'+temp[0]
+# 	seq_start = int(temp[1])
+# 	seq_end = int(temp[2])
+# 	# print seq_end-seq_start
+
+	
+
+# 	# if seq_end-seq_start < 6:
+# 	# 	small_seg_count+=1
+
+# 	command_string = 'mafExtractor --maf pm_filtered_chr1_filtered_3way.maf '+\
+# 		'--seq {} --start {} --stop {}'.format(chr_location,seq_start,seq_end) +\
+# 		'> mafTemp.maf'
+# 	os.system(command_string)
+
+# 	# with open('mafTemp.maf','r') as foo:
+# 	# 	with open('countFile','w+') as bar:
+# 	# 		for line in foo:
+# 	# 			if 'hg19' in line:
+# 	# 				bar.write(line)
+
+# 	num_blocks = (fn.file_len('mafTemp.maf')-2)//5
+
+# 	tempStorage = [0]*num_blocks
+# 	for i in range(len(tempStorage)):
+# 		spec1_seq = linecache.getline('mafTemp.maf',5*(i+1)-1)  
+# 		spec2_seq = linecache.getline('mafTemp.maf',5*(i+1)-1)
+# 		spec3_seq = linecache.getline('mafTemp.maf',5*(i+1)+1)
+# 		tempStorage[i] = my_3_way(spec1_seq,spec2_seq,spec3_seq)
+
+# 	encoded_sequence = ''.join(tempStorage)
+# 	cg_prop = get_CG_proportion(encoded_sequence)
+# 	cons_prop = get_cons_prop(encoded_sequence)
+	# if (cons_prop > cons_threshold and cg_prop > cg_threshold):
+	# 	cg_out[line_count] = 1
+	# else:
+	# 	cg_out[line_count] = 0
+	# line_count += 1
+
+# 	os.remove('mafTemp.maf')
+# 	linecache.clearcache()
+cg_df = pd.DataFrame({'cons+CG':cg_cons_out})
 storageDf=pd.read_csv('temp.csv',header=0)
 newDf=pd.concat([storageDf,cg_df],axis=1)
 newDf.to_csv('temp.csv',index=False,header=True)
