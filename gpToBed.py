@@ -12,6 +12,8 @@
 
 import os, argparse, csv, re, subprocess
 import numpy as np
+import linecache
+from collections import Counter
 from scipy.signal import find_peaks
 
 parser = argparse.ArgumentParser()
@@ -19,6 +21,7 @@ parser.add_argument("-gpFile", "--groupFile", help="group profile", type = str)
 parser.add_argument("-maf", "--mafFile", help="filtered .maf alignment", type = str) #should have 'filtered' prefix
 parser.add_argument("-gt", "--groupThreshold", help="Threshold group profile positions", type = float, default=0.75)
 parser.add_argument("-cpFile","--cpFile",help="Change point .cp file")
+parser.add_argument("-encoding", "--encodedFile", help="Alignment encoding", type = str)
 
 parser.add_argument("-o", "--output", help='name of output file', type = str)
 # parser.add_argument("-ct", "--cPointThreshold",help="Threshold for change point positions", type = float, default = 0.5)
@@ -50,35 +53,23 @@ init_minSegLen = 6
 ## format:
 ## no. chrom_in_ref pos_start pos_end other_org pos_start pos_end seq_len
 
-# with open(args.mafFile) as f:
-# 	with open('maf_gp_temp','w+') as g:
-# 	    for dirtyProfileLine in f:
-# 	    	cleanProfileLine = dirtyProfileLine.split()
-# 	    	if len(cleanProfileLine) <= 2:
-# 	    		pass
-# 	    	elif 'hg19'in cleanProfileLine[1]:
-# 	    		seqLen = int(cleanProfileLine[3])
-# 	    		if seqLen > segSize:
-# 	    			q = seqLen/segSize
-# 	    			r = seqLen % segSize
-# 	    			for i in range(1,q+1):
-# 	    				seqStart = int(cleanProfileLine[2])+(i-1)*segSize
-# 	    				writeString = "{},{},{}\n".format(cleanProfileLine[1],seqStart,segSize)
-# 	    				g.write(writeString)
-# 	    				if i == max(range(q+1)) and r != 0:
-# 	    					seqStart = seqStart+segSize
-# 	    					writeString = "{},{},{}\n".format(cleanProfileLine[1],seqStart,r)
-# 	    					g.write(writeString)
-# 	    		else:
-# 	    			writeString = "{},{},{}\n".format(cleanProfileLine[1],cleanProfileLine[2],cleanProfileLine[3])
-# 	    			g.write(writeString)
+#counts number of certain characters in a string
+def count_chars(s,chars):
+	counter = Counter(s)
+	return {c : counter.get(c,0) for c in chars}
 
-## Generate a file from .maf that only contains the human information
-with open(args.mafFile, 'r') as f:
-	with open('human_info_temp', 'w+') as g:
-		for line in f:
-			if 'hg19' in line:
-				g.write(line)
+# gets propotion of CG content in a string
+def get_CG_proportion(seq):
+	temp = 'qrstuvwxyzUVWXYZ' #specific to humans in 3 way alignment
+	list_CG = list(temp)
+	num_CG = sum(count_chars(seq,list_CG).values())
+	return num_CG/float(len(seq))
+
+#  gets proportion of conservation content of encoded
+def get_cons_prop(seq):
+	list_cons = ['a','v'] #This is specific to humans in the 3 way alignment
+	num_cons = sum(count_chars(seq,list_cons).values())
+	return num_cons/float(len(seq))
 
 # Returns True if segment is contains less than maxGapProp proportion of gaps
 def fn_acceptableGapProp(seg,maxGapProp):
@@ -128,6 +119,16 @@ def fn_acceptableGapLen(seg,maxGapLen):
 			break
 	return not isThere_a_Gap
 
+## Generate a temp file that had the encoded information separated by new lines
+myCommand = "tr '#' '\n' < {} > encodingTemp".format(args.encodedFile)
+os.system(myCommand)
+
+## Generate a file from .maf that only contains the human information
+with open(args.mafFile, 'r') as f:
+	with open('human_info_temp', 'w+') as g:
+		for line in f:
+			if 'hg19' in line:
+				g.write(line)
 ## Generate a file where lines alternate between indeces of sequence positions above threshold and 
 ## starting with profile values and then change point
 
@@ -138,10 +139,9 @@ with open(args.groupFile,'r') as f:
 				separator = ','
 
 				gpValue = rawGpLine.rstrip().split(',')
-				gpValue = gpValue[1:]
+				# gpValue = gpValue[1:]
 
 				cpValue = rawCpLine.rstrip().split(',')
-				cpValue = cpValue[1:]
 
 				h.write(separator.join(gpValue)+'\n')
 				h.write(separator.join(cpValue)+'\n')
@@ -151,6 +151,7 @@ with open(args.groupFile,'r') as f:
 with open('human_info_temp','r') as f:
 	with open('gp_and_cp_temp','r') as g:
 		with open(args.output,'w+') as h:
+
 			for line in f:
 
 
@@ -161,14 +162,19 @@ with open('human_info_temp','r') as f:
 				justChrom = tempVar1[1]
 				
 
-				valueVec_gp = g.readline()
-				valueVec_cp = g.readline()
+				valueVec_gp = g.readline().strip()
+				valueVec_cp = g.readline().strip()
+				# import pdb; pdb.set_trace()
 
+				lineNum = int(valueVec_gp.split(',')[0])
+				# lineNum = int(valueVec_gp.split(',')[0])
 				#as arrays
-
-				gpValueVec = np.array(map(float,valueVec_gp.split(',')))
+				gpValueVec = valueVec_gp.split(',')[1:]
+				print gpValueVec
+				gpValueVec = np.array(map(float,valueVec_gp.split(',')[1:]))
 				cpValueVec = np.array(map(float,valueVec_cp.split(',')))
 
+				
 				#find the peaks of where change points occur
 				changePoints, _ = find_peaks(cpValueVec,init_ct) 
 
@@ -249,172 +255,29 @@ with open('human_info_temp','r') as f:
 					
 							print 'are all gaps less than {} in length? {}\n'.format(init_maxGapLen,fn_acceptableGapLen(seg,init_maxGapLen))
 
+						encodedSeq = linecache.getline('encodingTemp',lineNum).strip()
+						testSeg = encodedSeq[segStart:segEnd+1]
+
+						if len(encodedSeq) == 0:
+							import pdb; pdb.set_trace()
+						else:
+							cgContent = get_CG_proportion(encodedSeq)
+							consProp = get_cons_prop(encodedSeq)
+
 						bedChromStart = chromStart  + segStart
 						bedChromEnd = chromStart + segEnd
-
-						if bedChromStart == 71547516:
-							import pdb; pdb.set_trace()
-
-						writeString = '{}\t{}\t{}\n'.format(justChrom,bedChromStart,bedChromEnd)
+						
+						# The order of stuff in bed file justChrom bedChromStart bedChromEnd cgContent consProp
+						writeString = '{}\t{}\t{}\t{}\t{}\n'.format(justChrom,bedChromStart,bedChromEnd,cgContent,consProp)
 						h.write(writeString)
 
+				linecache.clearcache()
 
-				# dirtyData = line.rstrip().split()
-				# speciesChorom = dirtyData[1]
-				# tempVar1 = speciesChorom.split('.')
-				# chromStart = int(dirtyData[2])
-				# justChrom = tempVar1[1]
-				
-
-				# valueVec_gp = g.readline()
-				# valueVec_cp = g.readline()
-
-				# #as arrays
-
-				# gpValueVec = np.array(map(float,valueVec_gp.split(',')))
-				# cpValueVec = np.array(map(float,valueVec_cp.split(',')))
-
-				# #find the peaks of where change points occur
-				# changePoints, _ = find_peaks(cpValueVec,init_ct) 
-
-				# if len(changePoints) == 0:
-				# 	# check first position and last position
-				
-				# 	lastPosVal = cp_line[-1]
-				# 	if lastPosVal > 0.5:
-				# 		# weird edge case of one long segment and one small segment at the end
-				# 		segCandidates = np.split(profile_line,np.array([0,len(profile_line)-1]))
-				# 		segCandidates = segCandidates[1:]
-				# 		# edgeCase1 = True
-						
-				# 	else: #one long segment
-				# 		segCandidates = np.split(profile_line,np.array([0,len(profile_line)]))
-				# 		segCandidates = segCandidates[1]
-				# 		# edgeCase2 = True
-				# #split the gpValueVec into sub arrays that contain segments
-				# #delineated by change point boundaries
-
-				# else:
-				# 	segCandidates = np.split(gpValueVec,peaks)
-
-				# for i in range(len(segCandidates)):
-
-				# 	if segCandidates
-				# 	# #end edge case
-				# 	# if i == len(changePoints):
-				# 	# 	segStart = changePoints[i-1]
-				# 	# 	segEnd = len()
-				# 	# elif changePoints[i] == 0:
-				# 	# 	segStart = -2
-				# 	# 	segEnd = -2
-				# 	# 	# this is the case where there is an empty segment
-				# 	# # elif i==0;
-				# 	# # 	segStart = 0
-				# 	# # 	segEnd = changePoints[i]
-				# 	# else:
-				# 	# 	if i == 0:
-				# 	# 		segStart = 0
-				# 	# 	else:
-					# 		segStart = changePoints[i-1]
-					# 	segEnd = changePoints[i]
-
-					# # if we have all the criteria we care about the segment
-					# if (fn_acceptableGapProp(segCandidates[i],init_maxGapProp) and
-					# 	fn_profVal(segCandidates[i],gt) and
-					# 	fn_checkLen(segCandidates[i],init_minSegLen) and
-					# 	fn_checkGapSize(segCandidates[i],init_maxGapLen)):
-
-					# 	bedChromStart = chromStart  + segStart
-					# 	bedChromEnd = chromStart + segEnd[0]
-
-					# 	writeString = '{}\t{}\t{}\n'.format(justChrom,bedChromStart,bedChromEnd)
-					# 	h.write(writeString)
-
-
-
-# with open('human_info_temp','r') as f:
-# 	with open(args.groupFile,'r') as g:
-# 		with open(args.output,'w+') as h: 
-# 			for line in g: #corresponds to an alignment block
-
-# 				# produce an np array of numeric
-# 				valueVec = line.rstrip().split(',')
-# 				valueVec = valueVec[1:]
-# 				valueVec = np.array(map(float,valueVec))
-
-# 				#find positions that are above threshold
-# 				indexVec = np.where(valueVec > t)[0]
-# 				diffVec = np.diff(indexVec)
-# 				#find positions where gaps are in the block
-# 				gapLocation = np.where(diffVec > 6)[0]
-					
-# 				if len(indexVec) == 0:
-# 					pass
-# 					#no segments above threshold in this line. Need to advance human data.dirtyData
-# 					dirtyData = f.readline().rstrip().split()
-
-# 				elif len(gapLocation) == 0:
-# 					#only one segment in the line
-# 					#positions of segment starts
-# 					segStart = np.insert(indexVec[gapLocation + 1],0,0)
-# 					#positions of segment ends
-# 					segEnd = np.insert(indexVec[gapLocation],len(indexVec[gapLocation]),max(indexVec))
-
-# 					dirtyData = f.readline().rstrip().split()
-
-# 					speciesChorom = dirtyData[1]
-# 					tempVar1 = speciesChorom.split('.')
-# 					chromStart = int(dirtyData[2])
-# 					justChrom = tempVar1[1]
-					
-
-# 					bedChromStart = chromStart  + segStart[0]
-# 					bedChromEnd = chromStart + segEnd[0] + 1
-					
-# 					writeString = '{}\t{}\t{}\n'.format(justChrom,bedChromStart,bedChromEnd)
-# 					h.write(writeString)
-
-# 				# # if there are gaps => multiple segments in the line
-# 				elif len(gapLocation) > 0:
-					
-# 					# print 'more than one segment in block \n'
-# 					#positions of segment starts
-# 					segStart = np.insert(indexVec[gapLocation + 1],0,0)
-# 					#positions of segment ends
-# 					segEnd = np.insert(indexVec[gapLocation],len(indexVec[gapLocation]),max(indexVec))
-# 					delVec = np.array([])	
-
-# 					# Collect positions for segments that are <6 in len
-# 					for i in range(len(segStart)):
-# 						segLen = segEnd[i] - segStart[i]
-# 						# if segLen > 50:
-# 						# 	print 'segment size = {}'.format(segLen)
-# 						if segLen < 6:
-# 							delVec = np.insert(delVec,0,i)
-# 					# delete those segments
-# 					delVec = delVec.astype(int)
-# 					segStart = np.delete(segStart,delVec)
-# 					segEnd = np.delete(segEnd,delVec)
-
-# 					dirtyData = f.readline().rstrip().split()
-# 					speciesChorom = dirtyData[1]
-# 					tempVar1 = speciesChorom.split('.')
-# 					justChrom = tempVar1[1]
-# 					chromStart = int(dirtyData[2])
-					
-# 					for j in range(len(segStart)):
-# 						bedChromStart = chromStart + segStart[j]
-# 						bedChromEnd = chromStart + segEnd[j] + 1 # +1 because interval is [start,end)
-# 						writeString = '{}\t{}\t{}\n'.format(justChrom,bedChromStart,bedChromEnd)
-
-						# h.write(writeString)
-
-						# print writeString
 
 # command = 'sort -o {} {}'.format(args.output,args.output)
 # subprocess.call(command,shell=True)
 # ## Delete temp files		
 # # uncomment this section at the end 
-# os.remove('human_info_temp')
-# os.remove('maf_gp_temp')
-
+os.remove('human_info_temp')
+os.remove('maf_gp_temp')
+os.remove('encodingTemp')
