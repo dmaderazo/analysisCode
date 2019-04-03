@@ -133,7 +133,7 @@ if os.path.isfile('temp.csv'):
 	os.remove('temp.csv')
 
 for queryFile in queryList:
-	df_data=fn.classification(inputFile,queryFile,overlapThreshold)
+	df_data=fn.classification(inputFile,queryFile,overlap_threshold)
 	
 	if isFirst:
 		df_data.to_csv('temp.csv',index=False,header=True)
