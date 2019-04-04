@@ -154,9 +154,9 @@ for line in fo:
 	cg_prop = float(temp[3])
 	cons_prop = float(temp[4])
 	if (cons_prop > cons_threshold and cg_prop > cg_threshold):
-		cg_out[line_count] = 1
+		cg_cons_out[line_count] = 1
 	else:
-		cg_out[line_count] = 0
+		cg_cons_out[line_count] = 0
 	line_count += 1
 
 # This black creates another .maf file that allows mafExtractor usage
