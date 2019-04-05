@@ -1,12 +1,13 @@
-# first do normal OpenBugs
-
 rm(list = ls())
-library(R2OpenBUGS)
+
+args <- commandArgs(trailingOnly = TRUE)
 
 
 
-binaryClasModel <- function(){
-  
+library(R2jags)
+
+modelString = "
+model{
     for(i in 1:N){ # N is the number of individuals
       for(j in 1:K){ # K is the number of classifiers
         
@@ -20,10 +21,13 @@ binaryClasModel <- function(){
     }
     # Distributions of classifier parameters
     for(j in 1:K){
+    	temp[j,1] ~ dunif(0,1)
+      temp[j,2] ~ dunif(0,1)
+
+      # Parameter for the distribution of the probability of getting a false negative
+      params[j,1] <- 1 - sqrt(temp[j,1]);
       # Parameter for the distribution of the probability of getting a true positive
-      params[j,1] ~ dunif(0,params[j,2])
-      # Parameter for the distribution of the probability of getting a true negative
-      params[j,2] ~ dunif(params[j,1],1)
+      params[j,2] <- 1 - sqrt(temp[j,1]) + temp[j,2]*sqrt(temp[j,1]);
       
       # Sensitivity
       sens[j] <- params[j,2]
@@ -33,26 +37,22 @@ binaryClasModel <- function(){
     
     # Distribution of prevalence
     pd ~ dunif(0,1)
-  
 }
+# ... end of JAGS model specification
+"
 
-write.model(binaryClasModel,"binaryClassModel.txt")
-model.file1 = paste(getwd(),"binaryClassModel.txt", sep="/")
+# Write the modelString to a file, using R commands:
+writeLines(modelString,con="binaryClassModel.txt")
 
-# don't change these paths ever
-
-WINE = "/Applications/Wine\\ Stable.app/Contents/Resources/wine/bin/wine"
-WINEPATH = "/Applications/Wine\\ Stable.app/Contents/Resources/wine/bin/winepath"
-OpenBUGSPATH = "/Users/dmaderazo/.wine/drive_c/Program Files/OpenBUGS/OpenBUGS323/OpenBUGS.exe"
-
-# 
-mydf<-read.csv('chr12segs_classified')
+fn <- args[1]
+mydf <- read.csv(fn)
 
 dataMat <-t( data.matrix(mydf))
 numRows <- nrow(mydf) #1000
 numCols <- ncol(mydf) #3 
 
 tfbsClassifications <- list(N=numRows,K=numCols,class=dataMat)
+
 #swineFlu <- list(N=48, K=2,
 #                 class=structure(.Data = c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 #                                           1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
@@ -65,20 +65,17 @@ tfbsClassifications <- list(N=numRows,K=numCols,class=dataMat)
 #data = list("swineFlu$N", "swineFlu$K", "swineFlu$class")
 # inits
 
-inits <- function(){list(params=structure(.Data = rep(0.5,numCols*2), .Dim=c(numCols,2)),
-              pd=0.5 
+inits <- function(){list(#params=structure(.Data = rep(0.5,numCols*2), .Dim=c(numCols,2)),
+              pd=0.5,temp=structure(.Data = rep(0.5,2*1), .Dim=c(1,2))  
 ) }
 
 parameters = c("params", "sens", "spec")
 
 #This runs the model
+jagsModel <- jags(model.file = "binaryClassModel.txt", data=tfbsClassifications,
+	inits=inits,n.chains=3, parameters.to.save=parameters,n.iter = 1000)
 
-binaryClass.sim <- bugs(data = tfbsClassifications, inits, model.file = model.file1,parameters.to.save=parameters,
-                        n.chains =2, n.iter = 1000, OpenBUGS.pgm=OpenBUGSPATH, 
-                        WINE=WINE, WINEPATH=WINEPATH,useWINE=T)
-
-
-attach.bugs(binaryClass.sim)
+attach.bugs(jagsModel)
 ####################################################
 # Now evaluate the classifiers
 
