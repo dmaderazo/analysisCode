@@ -13,6 +13,7 @@ numBurn=500
 numSkip=100000
 
 for sim_num in $(seq -w $initial_sim $final_sim);
+do
 	echo $sim_num
     # echo $sim_num > ./outMessages/stdoutseg_ng_$sim_num.txt 2>&1 &
     nice -20 changePoint -i $encodedFile  -sf seg_ng_$sim_num -n $numIts -b $numBurn -s $numSkip -ng  $sim_num -o rerun_ng_$sim_num > ./outMessages/stdoutrerun_ng_$sim_num.txt 2>&1 &
