@@ -7,7 +7,7 @@ num_sweeps=10; #This number of sims starting from $initial_sim
 final_sim=20;
 
 #### Parameters for changePoint ####
-encodedFile=noExons3way.maf
+encodedFile=noExonsEncoded.txt
 numIts=1000
 numBurn=500
 numSkip=100000
