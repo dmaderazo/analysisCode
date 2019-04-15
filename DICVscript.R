@@ -1,6 +1,6 @@
 rm(list = ls())
 
-system('getLnDataFrame.py -o myDF')
+system('getLnDataframe.py -o myDF')
 
 {
 foo <- read.csv('myDF', header = TRUE)
