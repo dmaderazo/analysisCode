@@ -21,15 +21,17 @@ for (i in 1:ncol(newDf)){
   newStorage[i] <- 0.5*var(newDf[,i]) - 2*mean(newDf[,i])
 }
 
-myData <- data.frame(x,newStorage)
+# myData <- data.frame(x,newStorage)
 
-write.table(myData[order(newStorage),],file = 'DICVs_ordered.txt')
+# write.table(myData[order(newStorage),],file = 'DICVs_ordered.txt')
 
 
 
 library(ggplot2)
 x <- seq(min(foo[1,]),max(foo[1,])) 
 df <- data.frame(newStorage,x)
+
+write.table(df[order(newStorage),],file = 'DICVs_ordered.txt')
 
 ggplot(df, aes(x = x, y = newStorage)) + geom_line() + theme_minimal() + theme(plot.title = element_text(hjust = 0.5)) + 
   labs(x = 'No. of Classes', y = 'DICV') + ggtitle('Information Criterion') + theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 24))
