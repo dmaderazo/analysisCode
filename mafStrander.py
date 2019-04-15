@@ -1,4 +1,4 @@
-
+#!/usr/bin/python
 
 # input should be .maf. This changes the strand on ALL species to "+"
 

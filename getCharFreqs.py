@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from __future__ import division
 # ## Python function/script to estimate character frequencies 
 # Given a .cp, profile file and encoding, estimate the character frequences in a class

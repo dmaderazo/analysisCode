@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/python
 # Copyright 2010, 2011, 2013, 2014 Martin C. Frith
 # Read MAF-format alignments: write them in other formats.
 # Seems to work with Python 2.x, x>=4

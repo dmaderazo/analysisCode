@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import functions as fn 
 import os 
 import argparse

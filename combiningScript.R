@@ -66,7 +66,7 @@ tfbsClassifications <- list(N=numRows,K=numCols,class=dataMat)
 # inits
 
 inits <- function(){list(#params=structure(.Data = rep(0.5,numCols*2), .Dim=c(numCols,2)),
-              pd=0.5,temp=structure(.Data = rep(0.5,2*1), .Dim=c(1,2))  
+              pd=0.5,temp=structure(.Data = rep(0.5,2*numCols), .Dim=c(numCols,2))  
 ) }
 
 parameters = c("params", "sens", "spec")
@@ -75,7 +75,11 @@ parameters = c("params", "sens", "spec")
 jagsModel <- jags(model.file = "binaryClassModel.txt", data=tfbsClassifications,
 	inits=inits,n.chains=3, parameters.to.save=parameters,n.iter = 1000)
 
-attach.bugs(jagsModel)
+sink('individualEstimates.txt')
+jagsModel
+sink()
+
+attach.jags(jagsModel)
 ####################################################
 # Now evaluate the classifiers
 
@@ -229,7 +233,7 @@ chancecorrect3 <-  as.numeric(table(bestrank3)[names(which.max(table(best3)))])/
 chancecorrect4 <-  as.numeric(table(bestrank4)[names(which.max(table(best4)))])/500
 
 # Print the results
-print(paste("According to Method 1 there is a probability of ",chancecorrect1, " that combination ", best1, " (", comboname1, ")", " is the best combination, with median sensitivity ", median(sensitivity2[best1,]), " and median specificity ", median(specificity2[best1,]), ".", sep=""))
+print(paste("According to Method 1 (Product of Sensitivity and Specificity) there is a probability of ",chancecorrect1, " that combination ", best1, " (", comboname1, ")", " is the best combination, with median sensitivity ", median(sensitivity2[best1,]), " and median specificity ", median(specificity2[best1,]), ".", sep=""))
 print("This combination is a union of the following intersections (given as a binary code.)")
 for(i in 1:2^N){
 	if(comboarray2[best1,i] == 1){
@@ -237,7 +241,7 @@ for(i in 1:2^N){
 	}
 }
 
-print(paste("According to Method 1 there is a probability of ",chancecorrect2, " that combination ", best2, " (", comboname2, ")", " is the best combination, with median sensitivity ", median(sensitivity2[best2,]), " and median specificity ", median(specificity2[best2,]), ".", sep=""))
+print(paste("According to Method 2 (Sum of Squares of Sensitivity and Specificity) there is a probability of ",chancecorrect2, " that combination ", best2, " (", comboname2, ")", " is the best combination, with median sensitivity ", median(sensitivity2[best2,]), " and median specificity ", median(specificity2[best2,]), ".", sep=""))
 print("This combination is a union of the following intersections (given as a binary code.)")
 for(i in 1:2^N){
 	if(comboarray2[best2,i] == 1){
@@ -245,7 +249,7 @@ for(i in 1:2^N){
 	}
 }
 
-print(paste("According to Method 1 there is a probability of ",chancecorrect3, " that combination ", best3, " (", comboname3, ")", " is the best combination, with median sensitivity ", median(sensitivity2[best3,]), " and median specificity ", median(specificity2[best3,]), ".", sep=""))
+print(paste("According to Method 3 (Sum of Absolute Values of Sensitivity and Specificity) there is a probability of ",chancecorrect3, " that combination ", best3, " (", comboname3, ")", " is the best combination, with median sensitivity ", median(sensitivity2[best3,]), " and median specificity ", median(specificity2[best3,]), ".", sep=""))
 print("This combination is a union of the following intersections (given as a binary code.)")
 for(i in 1:2^N){
 	if(comboarray2[best3,i] == 1){
@@ -253,7 +257,7 @@ for(i in 1:2^N){
 	}
 }
 
-print(paste("According to Method 1 there is a probability of ",chancecorrect4, " that combination ", best4, " (", comboname4, ")", " is the best combination, with median sensitivity ", median(sensitivity2[best4,]), " and median specificity ", median(specificity2[best4,]), ".", sep=""))
+print(paste("According to Method 4 (Minimum of Sensitivity and Specificity) there is a probability of ",chancecorrect4, " that combination ", best4, " (", comboname4, ")", " is the best combination, with median sensitivity ", median(sensitivity2[best4,]), " and median specificity ", median(specificity2[best4,]), ".", sep=""))
 print("This combination is a union of the following intersections (given as a binary code.)")
 for(i in 1:2^N){
 	if(comboarray2[best4,i] == 1){

@@ -1,8 +1,9 @@
 rm(list = ls())
 
-DICVfun <- function(csvFile)
+system('getLnDataFrame.py -o myDF')
+
 {
-foo <- read.csv(csvFile, header = TRUE)
+foo <- read.csv('myDF', header = TRUE)
 
 #foo <- foo[,order(names(foo))]
 # generate empty storage vector
@@ -35,3 +36,4 @@ ggplot(df, aes(x = x, y = newStorage)) + geom_line() + theme_minimal() + theme(p
 
 ggsave('DICV_Plot.pdf', plot = last_plot())
 }
+

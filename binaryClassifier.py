@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 # Function to assess whether or not regions identified in a .bed file 
 # are partially/completely contained or close to another region in a 
 # different .bed file
