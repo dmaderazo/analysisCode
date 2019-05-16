@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/anaconda2/bin/python
 
 # Script to generate wiggle file
 # Generate a wiggle track to identify segments that are:
@@ -43,11 +43,11 @@ subprocess.call('touch maf_gp_temp',shell=True)
 
 
 ## inits:
-init_maxGapProp = 0.5
-init_maxGapLen = 3
+init_maxGapProp = 0.5 # should be 0.5
+init_maxGapLen = 3 # should be 3
 gt = args.groupThreshold
 init_ct = 0.5
-init_minSegLen = 6
+init_minSegLen = 6 # should be 6
 ## Get Sequence positions. 
 ## Generate file that has sequence positions taken from .net.axt
 ## format:
@@ -170,7 +170,7 @@ with open('human_info_temp','r') as f:
 				# lineNum = int(valueVec_gp.split(',')[0])
 				#as arrays
 				gpValueVec = valueVec_gp.split(',')[1:]
-				print gpValueVec
+
 				gpValueVec = np.array(map(float,valueVec_gp.split(',')[1:]))
 				cpValueVec = np.array(map(float,valueVec_cp.split(',')))
 
@@ -240,12 +240,15 @@ with open('human_info_temp','r') as f:
 					
 					# import pdb; pdb.set_trace()
 					#if we have all the criteria we care about the segment
+
 					if (fn_acceptableGapProp(seg,init_maxGapProp) and
 						fn_profVal(seg,gt) and
 						fn_checkLen(seg,init_minSegLen) and
 						fn_acceptableGapLen(seg,init_maxGapLen)):
 
-						print seg
+
+
+
 						if all(seg <= 0):
 							print '\n less than 0.5 gaps {}\n'.format(fn_acceptableGapProp(seg,init_maxGapProp))
 					
@@ -259,7 +262,8 @@ with open('human_info_temp','r') as f:
 						testSeg = encodedSeq[segStart:segEnd+1]
 
 						if len(encodedSeq) == 0:
-							import pdb; pdb.set_trace()
+
+							print 'ERROR: LENGTH OF SEQUENCE IS 0'
 						else:
 							cgContent = get_CG_proportion(encodedSeq)
 							consProp = get_cons_prop(encodedSeq)
@@ -269,11 +273,19 @@ with open('human_info_temp','r') as f:
 						
 						# The order of stuff in bed file justChrom bedChromStart bedChromEnd cgContent consProp
 						writeString = '{}\t{}\t{}\t{}\t{}\n'.format(justChrom,bedChromStart,bedChromEnd,cgContent,consProp)
+
 						h.write(writeString)
 
 				linecache.clearcache()
+# write final sorted bed file
 
+sortCommand = 'sort-bed {} > {}'.format(args.output,'tempBed')
+subprocess.call(sortCommand,shell=True)
 
+writeCommand = 'cat tempBed > {}'.format(args.output)
+subprocess.call(writeCommand,shell=True)
+
+os.remove('tempBed')
 # command = 'sort -o {} {}'.format(args.output,args.output)
 # subprocess.call(command,shell=True)
 # ## Delete temp files		
@@ -281,3 +293,4 @@ with open('human_info_temp','r') as f:
 os.remove('human_info_temp')
 os.remove('maf_gp_temp')
 os.remove('encodingTemp')
+os.remove('gp_and_cp_temp')
