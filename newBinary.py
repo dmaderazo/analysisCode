@@ -34,15 +34,20 @@ parser.add_argument('-i','--input',help='sorted group file in .bed format')
 parser.add_argument('-o','--output',help='name of output .csv file')
 parser.add_argument("-t", "--overlapThresh", 
 	help="overlap threshold",type = float,default=0)
+parser.add_argument('-cons','--cons',help='conservation threshold',
+	type=float,default=0.5)
+parser.add_argument('-cg','--cg',help='cg threshold',
+	type=float,default=0.5)
 args = parser.parse_args()
 queryFile = args.input 
 outputFile = args.output
 t = args.overlapThresh
+cons_threshold = args.cons
+cg_threshold = args.cg
+
+
 isFirst = True
 queryLen = file_len(queryFile)
-
-cons_threshold = 0.5
-cg_threshold = 0.5
 # Parameter block:
 if t == 0:
 	p = '1'
@@ -70,7 +75,7 @@ for refFile in refList:
 	os.remove('temp.bed')
 
 	storage = np.array([0]*queryLen)
-	
+
 	if tempvar[0] == '':
 		pass
 	else:
