@@ -35,9 +35,9 @@ parser.add_argument('-o','--output',help='name of output .csv file')
 parser.add_argument("-t", "--overlapThresh", 
 	help="overlap threshold",type = float,default=0)
 parser.add_argument('-cons','--cons',help='conservation threshold',
-	type=float,default=0.5)
+	type=float,default=0.4)
 parser.add_argument('-cg','--cg',help='cg threshold',
-	type=float,default=0.5)
+	type=float,default=0.4)
 args = parser.parse_args()
 queryFile = args.input 
 outputFile = args.output
@@ -56,7 +56,7 @@ else:
 
 # glob in the relevant reference files: 
 # (need to be in directory where this is run)
-refList=glob.glob('sorted_*')
+refList=glob.glob('/data/dmaderazo/classifiers/sorted_*')
 
 # will store output in temp.
 if os.path.isfile('temp.csv'):
