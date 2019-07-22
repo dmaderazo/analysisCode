@@ -22,3 +22,4 @@ for i in profileList:
 		'-encoding {} -o {}').format(i,filteredMAF,changePointFile,
 		encodingFile, outName)
 	os.system(command)
+
