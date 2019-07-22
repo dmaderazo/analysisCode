@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/anaconda2/bin/python
+
 import os 
 import subprocess
 import numpy as np
