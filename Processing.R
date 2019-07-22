@@ -1,18 +1,52 @@
-#####
+# Provides the DICVplot and mean MixProps for each model
 rm(list = ls())
+args = commandArgs(trailingOnly=TRUE)
 library(ggplot2)
 library(reshape2)
 library(dplyr)
-# Input the file you care about
-system('mkdir logPlots')
-# Read in the header
+
+if (length(args)==0){
+  numSamples = 1000
+} else {
+  numSamples = args
+}
+
+{
+foo <- read.csv('myDF', header = TRUE)
+
+#foo <- foo[,order(names(foo))]
+# generate empty storage vector
+
+storage <- rep(0,ncol(foo))
+
+#for (i in 1:ncol(foo)){
+#  storage[i] = 0.5*var(foo[,i]) - 2*mean(foo[,i])
+#}
+numIts<-foo[2,1]
+newDf <- tail(foo, numSamples) #find a way to generalise this
+newStorage <- rep(0,ncol(newDf))
+
+for (i in 1:ncol(newDf)){
+  newStorage[i] <- 0.5*var(newDf[,i]) - 2*mean(newDf[,i])
+}
+
+# myData <- data.frame(x,newStorage)
+
+# write.table(myData[order(newStorage),],file = 'DICVs_ordered.txt')
+x <- seq(min(foo[1,]),max(foo[1,])) 
+df <- data.frame(newStorage,x)
+
+write.table(df[order(newStorage),],file = 'DICVs_ordered.txt')
+
+ggplot(df, aes(x = x, y = newStorage)) + geom_line() + theme_minimal() + theme(plot.title = element_text(hjust = 0.5)) + 
+  labs(x = 'No. of Classes', y = 'DICV') + ggtitle('Information Criterion') + theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 24))
+
+ggsave('DICV_Plot.pdf', plot = last_plot())
+}
+
 allFiles <- system('ls *.log', intern = TRUE)
 for (foo in allFiles){
   fileName <- foo
-  
-  #create subdirectory to save plots to 
-  subDir <- paste0('subdir',foo)
-  system(sprintf('mkdir %s', subDir))
   
   command1 <- sprintf("head -n 1 %s > tempFile", fileName)
   system(command1)
@@ -85,45 +119,15 @@ for (foo in allFiles){
   # plots
   iterSeq <- seq(1:numSims)
   
-  ggplot(data = df, aes(x = seq(1:numSims), y = numCP, group = 1)) + 
-    geom_line() + xlab('Iteration') + ylab('Number of change points') + 
-    ggtitle(sprintf('NumCp, ng=%s',numGp)) + theme_minimal()
-  ggsave('NumCp.pdf', plot = last_plot(), path = subDir)
   # df[,2] to df[,2+(numGp-1)] will be the mx Props
-  mixPropdf <- df[grep('mixProp', colnames(df))]
+  mixPropdf <- tail(df[grep('mixProp', colnames(df))],n=numSamples)
   mixPropMeans <- colMeans(mixPropdf)
   write.table(mixPropMeans, file = paste(fileName,'MixPropMeans.txt',sep = ''))
   
   mixPropdf$iter <- iterSeq
   mixPropdf <- melt(mixPropdf, id.vars = 'iter')
   
-  ggplot(mixPropdf, aes(x = iter, y = value, colour = variable)) + 
-    geom_line() + xlab('Iteration') + ylab('Mixture Proportions') +
-    ggtitle(sprintf('Mixture proportions Time Series, ng=%s', numGp)) + theme_minimal()
-  ggsave('MixProps.pdf', plot = last_plot(), path = subDir)
+ 
   
-  gpIndex = sprintf('%02d_',0:(numGp-1))
-  for (i in gpIndex){
-    gpDf <- df[grep(sprintf('alphaGp%s',i), colnames(df))]
-    gpDf$iter <- iterSeq
-    gpDf <- melt(gpDf, id.vars = 'iter')
-    
-    ggplot(gpDf, aes(x = iter, y = value, colour = variable)) +
-      geom_line() + xlab('Iteration') + ylab('Param Value') + 
-      ggtitle(sprintf('Pram Time Series, ng=%s', numGp)) + theme_minimal() +
-      theme(legend.position = "none")
-    ggsave(sprintf('%sGp.pdf',i), plot = last_plot(), path = subDir)
-  }
-  
-  ggplot(data = df, aes(x = iterSeq, y = logLikelihood)) +
-    geom_line() + xlab('Iteration') + ylab('Log Likelihood') + 
-    ggtitle(sprintf('Ln Likelihood Time Series, ng=%s',numGp)) + theme_minimal()
-  
-  logPlotName <- sprintf("LogLikelihood_%02d.pdf", as.numeric(numGp))
-  ggsave(logPlotName, plot = last_plot(), path = subDir)
-  moveLogPlot <- sprintf('cp ./%s/%s ./logPlots',subDir,logPlotName)
-  system(moveLogPlot)
 }
 
-system('mkdir logPlotDirs')
-system('mv subdir* ./logPlotDirs')
