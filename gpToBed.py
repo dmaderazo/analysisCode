@@ -159,7 +159,7 @@ with open('human_info_temp','r') as f:
 				speciesChorom = dirtyData[1]
 				tempVar1 = speciesChorom.split('.')
 				chromStart = int(dirtyData[2])
-				justChrom = tempVar1[1].replace('chr','')
+				justChrom = 'chr'+tempVar1[1].replace('chr','')
 				
 
 				valueVec_gp = g.readline().strip()
