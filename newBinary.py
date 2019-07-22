@@ -1,3 +1,4 @@
+#!/anaconda2/bin/python
 # new binary classification. Trying to make things quicker
 
 # steps
@@ -56,8 +57,8 @@ else:
 
 # glob in the relevant reference files: 
 # (need to be in directory where this is run)
-refList=glob.glob('/data/dmaderazo/classifiers/sorted_*')
-
+#refList=glob.glob('/data/dmaderazo/classifiers/sorted_*')
+refList=glob.glob('/Users/dmaderazo/Documents/analysis/classifierData/sorted_*')
 # will store output in temp.
 if os.path.isfile('temp.csv'):
 	os.remove('temp.csv')
@@ -86,7 +87,8 @@ for refFile in refList:
 		#Create a storage structure that is all 1's and replace with 0 for outList
 		
 		storage[outList] = 1
-	df_data = pd.DataFrame({refFile:storage.tolist()})
+	colName = refFile.split('/')[-1]
+	df_data = pd.DataFrame({colName:storage.tolist()})
 
 
 	if isFirst:
