@@ -15,11 +15,11 @@ num_sweeps=10; #This number of sims starting from $initial_sim
 final_sim=20;
 
 #### Parameters for changePoint ####
-encodedFile=WorkFlowEncoded
+encodedFile=chr6Encoded
 numIts=1000
-numBurn=1000
+numBurn=0
 numSkip=1000
-num_groups=7
+num_groups=16
 num_groups_less_run=$num_groups-1
 # To correctly use this program, you must have the following parameters:
 #   -i change-point_input_file_name
@@ -33,11 +33,11 @@ num_groups_less_run=$num_groups-1
 
 
 
-for group_num in $(seq -w 0 $num_groups_less_run);
+for group_num in $(seq -w 0 `expr $num_groups - 1`);
 do
     echo $group_num
     # echo $sim_num > ./outMessages/stdoutseg_ng_$sim_num.txt 2>&1 &
-    nice -20 readcp -i $encodedFile  -c seg_ng_07  -b $numBurn -ng  $num_groups -pg $group_num > ./modelTest/readcpout_$group_num.txt 2>&1 &
+    nice -20 readcp -i $encodedFile  -c chr6_ng_16  -b $numBurn -ng  $num_groups -pg $group_num > ./modelTest/readcpout_$group_num.txt 2>&1 &
 done
 echo "Jobs submitted"
 
