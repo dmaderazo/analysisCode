@@ -1,8 +1,8 @@
-rm(list = ls())
-
 args <- commandArgs(trailingOnly = TRUE)
 
-
+if (len(args)==0) {
+		stop('Must provide input file')
+	} 
 
 library(R2jags)
 
@@ -234,6 +234,7 @@ chancecorrect4 <-  as.numeric(table(bestrank4)[names(which.max(table(best4)))])/
 
 # Print the results
 print(paste("According to Method 1 (Product of Sensitivity and Specificity) there is a probability of ",chancecorrect1, " that combination ", best1, " (", comboname1, ")", " is the best combination, with median sensitivity ", median(sensitivity2[best1,]), " and median specificity ", median(specificity2[best1,]), ".", sep=""))
+print(paste("mean sensitivity ", mean(sensitivity2[best1,]), " and mean specificity ", mean(specificity2[best1,]), ".", sep=""))
 print("This combination is a union of the following intersections (given as a binary code.)")
 for(i in 1:2^N){
 	if(comboarray2[best1,i] == 1){
@@ -242,6 +243,7 @@ for(i in 1:2^N){
 }
 
 print(paste("According to Method 2 (Sum of Squares of Sensitivity and Specificity) there is a probability of ",chancecorrect2, " that combination ", best2, " (", comboname2, ")", " is the best combination, with median sensitivity ", median(sensitivity2[best2,]), " and median specificity ", median(specificity2[best2,]), ".", sep=""))
+print(paste("mean sensitivity ", mean(sensitivity2[best2,]), " and mean specificity ", mean(specificity2[best2,]), ".", sep=""))
 print("This combination is a union of the following intersections (given as a binary code.)")
 for(i in 1:2^N){
 	if(comboarray2[best2,i] == 1){
@@ -250,6 +252,7 @@ for(i in 1:2^N){
 }
 
 print(paste("According to Method 3 (Sum of Absolute Values of Sensitivity and Specificity) there is a probability of ",chancecorrect3, " that combination ", best3, " (", comboname3, ")", " is the best combination, with median sensitivity ", median(sensitivity2[best3,]), " and median specificity ", median(specificity2[best3,]), ".", sep=""))
+print(paste("mean sensitivity ", mean(sensitivity2[best3,]), " and mean specificity ", mean(specificity2[best3,]), ".", sep=""))
 print("This combination is a union of the following intersections (given as a binary code.)")
 for(i in 1:2^N){
 	if(comboarray2[best3,i] == 1){
@@ -258,6 +261,7 @@ for(i in 1:2^N){
 }
 
 print(paste("According to Method 4 (Minimum of Sensitivity and Specificity) there is a probability of ",chancecorrect4, " that combination ", best4, " (", comboname4, ")", " is the best combination, with median sensitivity ", median(sensitivity2[best4,]), " and median specificity ", median(specificity2[best4,]), ".", sep=""))
+print(paste("mean sensitivity ", mean(sensitivity2[best4,]), " and mean specificity ", mean(specificity2[best4,]), ".", sep=""))
 print("This combination is a union of the following intersections (given as a binary code.)")
 for(i in 1:2^N){
 	if(comboarray2[best4,i] == 1){
@@ -265,4 +269,5 @@ for(i in 1:2^N){
 	}
 }
 
-
+clean_file = 'rm -rf binaryClassModel.txt'
+system(clean_file)
