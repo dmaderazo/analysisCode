@@ -43,7 +43,7 @@ subprocess.call('touch maf_gp_temp',shell=True)
 
 
 ## inits:
-init_maxGapProp = 0.5 # should be 0.5
+init_maxGapProp = 0.1 # should be 0.5
 init_maxGapLen = 3 # should be 3
 gt = args.groupThreshold
 init_ct = 0.5

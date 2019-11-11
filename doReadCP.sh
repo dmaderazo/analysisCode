@@ -15,7 +15,7 @@ num_sweeps=10; #This number of sims starting from $initial_sim
 final_sim=20;
 
 #### Parameters for changePoint ####
-encodedFile=chr6Encoded
+encodedFile=chr19Encoded
 numIts=1000
 numBurn=0
 numSkip=1000
@@ -37,7 +37,8 @@ for group_num in $(seq -w 0 `expr $num_groups - 1`);
 do
     echo $group_num
     # echo $sim_num > ./outMessages/stdoutseg_ng_$sim_num.txt 2>&1 &
-    nice -20 readcp -i $encodedFile  -c chr6_ng_16  -b $numBurn -ng  $num_groups -pg $group_num > ./modelTest/readcpout_$group_num.txt 2>&1 &
+    readcp -i $encodedFile  -c chr19_ng_16  -b $numBurn -ng  $num_groups -pg $group_num > ./modelTest/readcpout_$group_num.txt 2>&1 &
+    # nice -20 readcp -i $encodedFile  -c chr9_ng_20  -b $numBurn -ng  $num_groups -pg $group_num > ./modelTest/readcpout_$group_num.txt 2>&1 &
 done
 echo "Jobs submitted"
 

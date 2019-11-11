@@ -92,8 +92,8 @@ for (foo in allFiles){
   ggsave('NumCp.pdf', plot = last_plot(), path = subDir)
   # df[,2] to df[,2+(numGp-1)] will be the mx Props
   mixPropdf <- df[grep('mixProp', colnames(df))]
-  mixPropMeans <- colMeans(mixPropdf)
-  write.table(mixPropMeans, file = paste(fileName,'MixPropMeans.txt',sep = ''))
+  # mixPropMeans <- colMeans(mixPropdf)
+  # write.table(mixPropMeans, file = paste(fileName,'MixPropMeans.txt',sep = ''))
   
   mixPropdf$iter <- iterSeq
   mixPropdf <- melt(mixPropdf, id.vars = 'iter')

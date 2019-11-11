@@ -17,9 +17,9 @@ encodingFile = glob('chr*Encoded')[0]
 for i in profileList:
 	item = i
 	print item
-	outName = item.split('.')[0]+'_'+item.split('.')[2]+'.bed'
+	outName = item.split('.')[0]+'_'+item.split('.')[2]+'_90_10gap'+'.bed'
 	command = ('gpToBed.py -gpFile {} -maf {} -cpFile {} '
-		'-encoding {} -o {}').format(i,filteredMAF,changePointFile,
-		encodingFile, outName)
+		'-encoding {} -o {} -gt {}').format(i,filteredMAF,changePointFile,
+		encodingFile, outName, 0.9)
 	os.system(command)
 

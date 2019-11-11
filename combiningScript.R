@@ -1,11 +1,11 @@
 args <- commandArgs(trailingOnly = TRUE)
 
-if (len(args)==0) {
+if (length(args)==0) {
 		stop('Must provide input file')
 	} 
 
-library(R2jags)
-
+library(jagsUI)
+library(coda)
 modelString = "
 model{
     for(i in 1:N){ # N is the number of individuals
@@ -45,6 +45,9 @@ model{
 writeLines(modelString,con="binaryClassModel.txt")
 
 fn <- args[1]
+outName <- args[2]
+estimateName <- args[3]
+
 mydf <- read.csv(fn)
 
 dataMat <-t( data.matrix(mydf))
@@ -72,22 +75,31 @@ inits <- function(){list(#params=structure(.Data = rep(0.5,numCols*2), .Dim=c(nu
 parameters = c("params", "sens", "spec")
 
 #This runs the model
-jagsModel <- jags(model.file = "binaryClassModel.txt", data=tfbsClassifications,
-	inits=inits,n.chains=3, parameters.to.save=parameters,n.iter = 1000)
+jagsModel <- autojags(model.file = "binaryClassModel.txt", data=tfbsClassifications,
+	inits=inits,n.chains=4, iter.increment=1000,parameters.to.save=parameters,n.iter = 7500,
+	n.burnin=500,n.thin=20,parallel =TRUE, max.iter = 100000)
 
-sink('individualEstimates.txt')
+sink(estimateName)
 jagsModel
 sink()
 
-attach.jags(jagsModel)
+# attach.jags(jagsModel)
 ####################################################
 # Now evaluate the classifiers
 
 # Creaete an array to record the combinations that make up each classifier. 
 # Will be a 2^N*N matrix of 1s and 0s, where a 0 in the {i,j}th position indicates to 
 # intersect with classifier j in combination i.
+
 comboarray <- NULL
+
+# you better hope these have at least 1000 rows
+# or this will shit itself
+sens <- jagsModel$sims.list$sens
+spec <- jagsModel$sims.list$spec
 N <- ncol(sens)
+
+
 for(i in 1:2^N-1){
 	newrow <- NULL
 	for(j in 1:N){
@@ -233,6 +245,7 @@ chancecorrect3 <-  as.numeric(table(bestrank3)[names(which.max(table(best3)))])/
 chancecorrect4 <-  as.numeric(table(bestrank4)[names(which.max(table(best4)))])/500
 
 # Print the results
+sink(outName)
 print(paste("According to Method 1 (Product of Sensitivity and Specificity) there is a probability of ",chancecorrect1, " that combination ", best1, " (", comboname1, ")", " is the best combination, with median sensitivity ", median(sensitivity2[best1,]), " and median specificity ", median(specificity2[best1,]), ".", sep=""))
 print(paste("mean sensitivity ", mean(sensitivity2[best1,]), " and mean specificity ", mean(specificity2[best1,]), ".", sep=""))
 print("This combination is a union of the following intersections (given as a binary code.)")
@@ -268,6 +281,59 @@ for(i in 1:2^N){
 		print(comboarray[i,])
 	}
 }
+
+# write.table(sensitivity2,file = "sensitivity2.txt",sep = ",")
+# write.table(specificity2,file = "specificity2.txt",sep = ",")
+
+# # R script to produce a table of the ranking values of the combinations of classifiers
+
+# # Change the separator values to whatever the separators are in the input files
+# sensitivity <- read.table(file="sensitivity2.txt",sep=",");
+# specificity <- read.table(file="specificity2.txt",sep=",");
+
+# N <- dim(sensitivity)[1];
+
+# # Calculate the ranking values for each combination
+# rank <- array(dim=c(N,8))
+
+# # First method: Product of Sensitivity and Specificity
+
+# for(i in 1:N){
+#   rank[i,1] <- mean(as.numeric(sensitivity[i,]*specificity[i,]));
+#   rank[i,2] <- sd(as.numeric(sensitivity[i,]*specificity[i,]));
+# }
+
+# print("Ranked by first method.");
+
+# # Second method: Sum of Squares of Sensitivity and Specificity
+# for(i in 1:N){
+#   rank[i,3] <- mean(as.numeric(sensitivity[i,]^2+specificity[i,]^2));
+#   rank[i,4] <- sd(as.numeric(sensitivity[i,]^2+specificity[i,]^2));
+# }
+
+# print("Ranked by second method.");
+
+# # Third method: Sum of Absolute Values of Sensitivity and Specificity
+# for(i in 1:N){
+#   rank[i,5] <- mean(as.numeric(abs(sensitivity[i,])+abs(specificity[i,])));
+#   rank[i,6] <- sd(as.numeric(abs(sensitivity[i,])+abs(specificity[i,])));
+# }
+
+# print("Ranked by third method.");
+
+# # Fourth method: Minimum of Sensitivity and Specificity
+# for(i in 1:N){
+#   method4 <- array(dim=c(1,500));
+#   for(j in 1:500){
+#     method4[1,j] <- min(sensitivity[i,j],specificity[i,j]);
+#   }
+#   rank[i,7] <- mean(as.numeric(method4));
+#   rank[i,8] <- sd(as.numeric(method4));
+# }
+
+# print("Ranked by fourth method.");
+sink()
+# write.table(rank,file="rank.csv",sep=",",row.names=FALSE,col.names=FALSE);
 
 clean_file = 'rm -rf binaryClassModel.txt'
 system(clean_file)

@@ -9,9 +9,14 @@ import csv
 from collections import Counter
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-gt", "--groupThreshold", help="Threshold group profile positions", type = float, default=0.75)
-parser.add_argument("-encodedFile", "--encodedFile", help="Alignment encoding", type = str)
-parser.add_argument('-o','--outputFile',help = 'Name of outputFile. saves with .csv extension',type = str)
+parser.add_argument("-gt", "--groupThreshold", 
+	help="Threshold group profile positions", type = float, default=0.75)
+parser.add_argument("-encodedFile", "--encodedFile", 
+	help="Alignment encoding", type=str)
+parser.add_argument('-o','--outputFile',
+	help ="Name of outputFile. saves with .csv extension", type=str)
+parser.add_argument('-r','--rowName',
+	help ="Name for rows follow 'crhom_'",type=str)
 args = parser.parse_args()
 # x = [0]*462 
 # myArray = np.array(x).reshape(14,33)
@@ -92,7 +97,7 @@ for myProfile in profileList:
 
 name = args.outputFile 
 
-nameList = [name+'_'+i.split('.')[-1] for i in profileList]
+nameList = [args.rowName+'_'+i.split('.')[-1] for i in profileList]
 # This is the final frame that has groups listed
 myFrame.insert(0,'GroupFile',nameList,True)
 
